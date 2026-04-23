@@ -17,6 +17,8 @@ namespace StepDevil
         const string KeyStreak = "sd_daily_streak";
         const string KeyLastStreakDate = "sd_daily_streak_date";
 
+        // for git test purpose
+
         /// <summary>Today's date string (yyyy-MM-dd) in local time.</summary>
         static string TodayKey => DateTime.Now.ToString("yyyy-MM-dd");
 
