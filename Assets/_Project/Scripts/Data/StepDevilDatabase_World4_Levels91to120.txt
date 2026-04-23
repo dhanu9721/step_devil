@@ -1,0 +1,1203 @@
+            new StepDevilLevelDef(91, 3, "Icon of Doom", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605")
+                }
+            }),
+            new StepDevilLevelDef(92, 3, "Symbol Shock", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2713"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u2713"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB")
+                }
+            }),
+            new StepDevilLevelDef(93, 3, "Glyph Trick", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605"),
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605")
+                }
+            }),
+            new StepDevilLevelDef(94, 3, "Sign Flip", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u2605"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2717"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u21BB")
+                }
+            }),
+            new StepDevilLevelDef(95, 3, "Mark of the Devil", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2713"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191")
+                }
+            }),
+            new StepDevilLevelDef(96, 3, "Rune Riddle", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2191")
+                }
+            }),
+            new StepDevilLevelDef(97, 3, "Badge Bluff", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2191"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2713"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2717"),
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191")
+                }
+            }),
+            new StepDevilLevelDef(98, 3, "Emblem Error", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2713"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u2605"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717")
+                }
+            }),
+            new StepDevilLevelDef(99, 3, "Sigil Swap", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2191"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2713")
+                }
+            }),
+            new StepDevilLevelDef(100, 3, "Century Mark", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u2605"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2717"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191")
+                }
+            }),
+            new StepDevilLevelDef(101, 3, "Triple Threat", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Mirror, "purple", "MIRROR", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Solid, "green", "DANGER", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "red", "MIRROR", "\u21BB"),
+                    S(StepDevilStoneType.Void, "red", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Bonus, "gold", "DANGER", "\u2605"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Spring, "green", "BOUNCE", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2605")
+                }
+            }),
+            new StepDevilLevelDef(102, 3, "Any Signal", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2605"),
+                    S(StepDevilStoneType.Mirror, "purple", "MIRROR", "\u2713"),
+                    S(StepDevilStoneType.Solid, "gold", "SAFE", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Void, "red", "SAFE", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Spring, "yellow", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Bonus, "red", "BONUS", "\u2717"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "green", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2605")
+                }
+            }),
+            new StepDevilLevelDef(103, 3, "Trust Nothing", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2713"),
+                    S(StepDevilStoneType.Solid, "red", "DANGER", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "gold", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2605"),
+                    S(StepDevilStoneType.Mirror, "red", "MIRROR", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "BONUS", "\u2717"),
+                    S(StepDevilStoneType.Bonus, "red", "BONUS", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Spring, "red", "BOUNCE", "\u2713"),
+                    S(StepDevilStoneType.Void, "yellow", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2605"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u21BB")
+                }
+            }),
+            new StepDevilLevelDef(104, 3, "Mirror Maze", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "purple", "MIRROR", "\u2717"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Mirror, "red", "MIRROR", "\u21BB"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Void, "purple", "DANGER", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "green", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Void, "red", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "purple", "SAFE", "\u2713"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Mirror, "purple", "DANGER", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "BONUS", "\u2717")
+                }
+            }),
+            new StepDevilLevelDef(105, 3, "Reflected Lies", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "red", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Void, "purple", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Mirror, "purple", "MIRROR", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "green", "MIRROR", "\u2605"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Mirror, "purple", "SAFE", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Void, "red", "BONUS", "\u21BB")
+                }
+            }),
+            new StepDevilLevelDef(106, 3, "Backward Glance", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Mirror, "purple", "DANGER", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Mirror, "red", "MIRROR", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "purple", "MIRROR", "\u2605"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Void, "red", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "purple", "DANGER", "\u2717"),
+                    S(StepDevilStoneType.Mirror, "red", "MIRROR", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Bonus, "gold", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2713"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u21BB")
+                }
+            }),
+            new StepDevilLevelDef(107, 3, "Inverted World", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2713"),
+                    S(StepDevilStoneType.Solid, "red", "DANGER", "\u2717"),
+                    S(StepDevilStoneType.Mirror, "purple", "MIRROR", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "green", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Void, "purple", "DANGER", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "gold", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Void, "red", "BONUS", "\u2717"),
+                    S(StepDevilStoneType.Bonus, "red", "BONUS", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Mirror, "purple", "MIRROR", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u2713),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "red", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191")
+                }
+            }),
+            new StepDevilLevelDef(108, 3, "Upside Down", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u21BB)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "purple", "MIRROR", "\u2605"),
+                    S(StepDevilStoneType.Void, "red", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Spring, "red", "BOUNCE", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Mirror, "green", "MIRROR", "\u21BB"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2191"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2713)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Mirror, "purple", "SAFE", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2713"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191")
+                }
+            }),
+            new StepDevilLevelDef(109, 3, "Wrong Way", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "red", "MIRROR", "\u2717"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2605)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Mirror, "purple", "MIRROR", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u21BB)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u2713"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Mirror, "red", "SAFE", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "purple", "DANGER", "\u2717"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2191)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u21BB"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713")
+                }
+            }),
+            new StepDevilLevelDef(110, 3, "Distortion", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Solid, "red", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Mirror, "purple", "MIRROR", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "red", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2717)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "purple", "DANGER", "\u2717"),
+                    S(StepDevilStoneType.Mirror, "green", "MIRROR", "\u2605)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Bonus, "red", "BONUS", "\u2713"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB")
+                }
+            }),
+            new StepDevilLevelDef(111, 3, "Full Spectrum", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Mirror, "red", "MIRROR", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2717"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "purple", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "gold", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2605)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Spring, "red", "BOUNCE", "\u2191"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "purple", "DANGER", "\u2605"),
+                    S(StepDevilStoneType.Mirror, "red", "DANGER", "\u21BB)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Spring, "green", "BOUNCE", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2713"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u21BB")
+                }
+            }),
+            new StepDevilLevelDef(112, 3, "All Channels", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Solid, "red", "DANGER", "\u2717"),
+                    S(StepDevilStoneType.Mirror, "purple", "DANGER", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u21BB)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Spring, "red", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Void, "purple", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Mirror, "green", "MIRROR", "\u2605)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "gold", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2713"),
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2191"),
+                    S(StepDevilStoneType.Solid, "red", "DANGER", "\u2717)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "red", "MIRROR", "\u2717"),
+                    S(StepDevilStoneType.Void, "purple", "SAFE", "\u2605)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Spring, "red", "BOUNCE", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2605)
+                }
+            }),
+            new StepDevilLevelDef(113, 3, "Signal Jam", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Mirror, "purple", "SAFE", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "purple", "DANGER", "\u2717"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2713)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Spring, "green", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Void, "red", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u21BB)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "red", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2191)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Mirror, "purple", "MIRROR", "\u2605)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2713"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2717"),
+                    S(StepDevilStoneType.Spring, "gold", "BOUNCE", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u21BB)
+                }
+            }),
+            new StepDevilLevelDef(114, 3, "Noise Floor", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2605"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717),
+                    S(StepDevilStoneType.Mirror, "purple", "MIRROR", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2713"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u21BB)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "green", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Void, "red", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u2717)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "purple", "SAFE", "\u2713"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2191)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Bonus, "red", "BONUS", "\u21BB"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "red", "MIRROR", "\u2191"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2605)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Spring, "purple", "BOUNCE", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2605)
+                }
+            }),
+            new StepDevilLevelDef(115, 3, "Interference", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Mirror, "green", "DANGER", "\u21BB),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2713)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Spring, "red", "BOUNCE", "\u2605"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Mirror, "purple", "MIRROR", "\u2717)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Void, "purple", "DANGER", "\u2605)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2191"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "red", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2605)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717)
+                }
+            }),
+            new StepDevilLevelDef(116, 3, "Scrambled", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "SAFE", "\u2713"),
+                    S(StepDevilStoneType.Solid, "green", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Mirror, "red", "MIRROR", "\u2605)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "purple", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2717)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2713"),
+                    S(StepDevilStoneType.Void, "purple", "DANGER", "\u2605"),
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u2191)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2605)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Bonus, "red", "BONUS", "\u2191"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2713"),
+                    S(StepDevilStoneType.Mirror, "green", "MIRROR", "\u2605)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Spring, "green", "BOUNCE", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "purple", "MIRROR", "\u2717"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2191)
+                }
+            }),
+            new StepDevilLevelDef(117, 3, "Garbled Truth", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Mirror, "red", "DANGER", "\u21BB)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "purple", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2713)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "green", "MIRROR", "\u2191"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605"),
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u21BB)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2717)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "SAFE", "\u2713"),
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2605"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "purple", "MIRROR", "\u2191"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2717)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Spring, "red", "BOUNCE", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u21BB)
+                }
+            }),
+            new StepDevilLevelDef(118, 3, "Corrupt Data", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Mirror, "purple", "MIRROR", "\u2717"),
+                    S(StepDevilStoneType.Solid, "red", "DANGER", "\u2605)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u21BB)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "red", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Spring, "yellow", "BOUNCE", "\u2605)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "purple", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2191)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2191)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "green", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Void, "red", "SAFE", "\u2605)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Spring, "green", "BOUNCE", "\u2717"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u21BB)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2713"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2605)
+                }
+            }),
+            new StepDevilLevelDef(119, 3, "System Error", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "red", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Void, "red", "SAFE", "\u21BB)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Spring, "red", "BOUNCE", "\u2717"),
+                    S(StepDevilStoneType.Void, "purple", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Mirror, "purple", "MIRROR", "\u2605)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2191)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u21BB"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2717)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "green", "MIRROR", "\u2605"),
+                    S(StepDevilStoneType.Void, "red", "SAFE", "\u2191)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2713"),
+                    S(StepDevilStoneType.Spring, "green", "BOUNCE", "\u2605"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u21BB)
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2717"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2191)
+                }
+            }),
+            new StepDevilLevelDef(120, 3, "Boss: Icon King", new[]
+            {
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Solid, "red", "DANGER", "\u2191"),
+                    S(StepDevilStoneType.Mirror, "red", "MIRROR", "\u21BB")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2717"),
+                    S(StepDevilStoneType.Mirror, "green", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2713")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Spring, "red", "SAFE", "\u2191"),
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2605"),
+                    S(StepDevilStoneType.Mirror, "purple", "MIRROR", "\u2717")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Void, "red", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Bonus, "gold", "BONUS", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Mirror, "red", "DANGER", "\u21BB"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2605"),
+                    S(StepDevilStoneType.Void, "green", "SAFE", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "purple", "DANGER", "\u2713"),
+                    S(StepDevilStoneType.Mirror, "green", "MIRROR", "\u2717"),
+                    S(StepDevilStoneType.Solid, "red", "SAFE", "\u2605")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Spring, "red", "BOUNCE", "\u2605"),
+                    S(StepDevilStoneType.Void, "red", "DANGER", "\u2191")
+                },
+                new[]
+                {
+                    S(StepDevilStoneType.Void, "green", "DANGER", "\u2717"),
+                    S(StepDevilStoneType.Mirror, "purple", "SAFE", "\u21BB"),
+                    S(StepDevilStoneType.Solid, "green", "SAFE", "\u2605")
+                }
+            }),

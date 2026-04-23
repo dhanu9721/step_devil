@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"\\\\.cs$\")",
+      "Bash(xargs wc:*)",
+      "Bash(where ffmpeg:*)",
+      "Bash(where magick:*)",
+      "Bash(where python:*)",
+      "Bash(where python3:*)",
+      "Bash(python -c \"from PIL import Image; print\\(''Pillow OK''\\)\")",
+      "Bash(where py:*)",
+      "Bash(py -c \"from PIL import Image; print\\(''OK''\\)\")",
+      "Read(//c/Users/dhanu/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/3b3b481f-643f-45a7-9fa8-bf7d5c0973a9/2cde3d01-0ea2-4059-b863-2ed56fb82713/skills/docx/**)",
+      "Bash(python scripts/office/unpack.py \"C:\\\\Users\\\\dhanu\\\\Downloads\\\\STEP_DEVIL_GDD_Dhananjay.docx\" unpacked/)",
+      "Bash(pip install:*)",
+      "Bash(pip3 install:*)",
+      "Bash(python3 -c ':*)",
+      "Bash(powershell -Command \"Get-Content 'C:\\\\Users\\\\dhanu\\\\.claude\\\\projects\\\\D--UnityProjects-Step-Devil\\\\aeb4c5e5-c133-426a-8ae1-abeb31c2b22a.jsonl' | Select-Object -Last 30\")",
+      "Bash(powershell -Command \"Get-Content 'C:\\\\Users\\\\dhanu\\\\.claude\\\\projects\\\\D--UnityProjects-Step-Devil\\\\aeb4c5e5-c133-426a-8ae1-abeb31c2b22a\\\\tool-results\\\\bo7hlzhgg.txt' | Select-Object -Last 5\")",
+      "Read(//c/Users/dhanu/Downloads/**)",
+      "Bash(python -c ':*)",
+      "Bash(py --version)",
+      "Bash(powershell -Command ':*)",
+      "Bash(grep -rn \"\\\\.text\\\\s*=.*\\\\\\\\\\\\\\\\U0001F\\\\|\\\\.text\\\\s*=.*emoji\\\\|icon\\\\.text\\\\|emojiT\\\\b\" \"D:/UnityProjects/Step_Devil/Assets/_Project/Scripts/Gameplay/\")",
+      "Bash(grep -v \"^.*//.*CreateText\")",
+      "Bash(powershell -Command \"Get-Content 'C:\\\\Users\\\\dhanu\\\\.claude\\\\projects\\\\D--UnityProjects-Step-Devil\\\\aeb4c5e5-c133-426a-8ae1-abeb31c2b22a.jsonl' | Select-Object -Last 200\")",
+      "Bash(powershell -Command \"Get-Content 'C:\\\\Users\\\\dhanu\\\\.claude\\\\projects\\\\D--UnityProjects-Step-Devil\\\\aeb4c5e5-c133-426a-8ae1-abeb31c2b22a.jsonl' -Tail 50\")",
+      "Bash(powershell -Command \"Get-Content 'C:\\\\Users\\\\dhanu\\\\.claude\\\\projects\\\\D--UnityProjects-Step-Devil\\\\aeb4c5e5-c133-426a-8ae1-abeb31c2b22a\\\\tool-results\\\\b7wmdqk1b.txt'\")"
+    ]
+  }
+}
