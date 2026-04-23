@@ -105,6 +105,17 @@ namespace StepDevil
             rt.offsetMax = new Vector2(-r, -t);
         }
 
+        /// <summary>Row anchored to parent top, stretched horizontally with side margin on each side.
+        /// Use this for list items stacked under a scroll content rect.</summary>
+        static void RowTopStretch(RectTransform rt, float y, float h, float sideInset)
+        {
+            rt.anchorMin = new Vector2(0f, 1f);
+            rt.anchorMax = new Vector2(1f, 1f);
+            rt.pivot     = new Vector2(0.5f, 1f);
+            rt.sizeDelta = new Vector2(-sideInset * 2f, h);
+            rt.anchoredPosition = new Vector2(0f, -y);
+        }
+
         static void StretchFull(RectTransform rt) => SI(rt);
 
         // ─────────────────────────────────────────────────────────────────────
@@ -1239,156 +1250,166 @@ namespace StepDevil
             viewportGo.AddComponent<Image>().color = Color.white;
             viewportGo.AddComponent<Mask>().showMaskGraphic = false;
 
+            // Content rect — stretches to viewport width; height is set manually below.
+            // NO layout components on this or its children. Children use anchored positions.
             var contentGo = new GameObject("Content", typeof(RectTransform));
             contentGo.transform.SetParent(viewportGo.transform, false);
             var contentRt = contentGo.GetComponent<RectTransform>();
             contentRt.anchorMin = new Vector2(0f, 1f);
             contentRt.anchorMax = new Vector2(1f, 1f);
             contentRt.pivot     = new Vector2(0.5f, 1f);
-            contentRt.sizeDelta = Vector2.zero;
             contentRt.anchoredPosition = Vector2.zero;
-            // Scroll content: VLG + CSF correct here
-            var csf = contentGo.AddComponent<ContentSizeFitter>();
-            csf.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-            csf.verticalFit   = ContentSizeFitter.FitMode.PreferredSize;
-            var contentV = contentGo.AddComponent<VerticalLayoutGroup>();
-            contentV.childAlignment = TextAnchor.UpperCenter;
-            contentV.padding = new RectOffset(16, 16, 16, 32);
-            contentV.spacing = 8f;
-            contentV.childControlWidth  = true;
-            contentV.childControlHeight = true;
-            contentV.childForceExpandWidth  = true;
-            contentV.childForceExpandHeight = false;
 
             sr.viewport = viewportGo.GetComponent<RectTransform>();
             sr.content  = contentRt;
 
-            BuildStoreSectionHeader(contentGo.transform, "Coins");
-            BuildStoreItem(contentGo.transform, "coins", "100 Coins",   "coins_100",  100,  "\u20B910");
-            BuildStoreItem(contentGo.transform, "coins", "500 Coins",   "coins_500",  500,  "\u20B940");
-            BuildStoreItem(contentGo.transform, "coins", "1,200 Coins", "coins_1200", 1200, "\u20B980");
-            BuildStoreItem(contentGo.transform, "coins", "3,000 Coins", "coins_3000", 3000, "\u20B9180");
+            // Stack items with a manual running y offset (no layout groups).
+            const float padTop    = 16f;
+            const float padBottom = 32f;
+            const float gap       = 8f;
+            const float side      = 16f;
+            float y = padTop;
 
-            BuildStoreSectionHeader(contentGo.transform, "Gems");
-            BuildStoreItem(contentGo.transform, "gems", "5 Diamonds",  "gems_5",  5,  "\u20B910");
-            BuildStoreItem(contentGo.transform, "gems", "20 Diamonds", "gems_20", 20, "\u20B930");
-            BuildStoreItem(contentGo.transform, "gems", "60 Diamonds", "gems_60", 60, "\u20B980");
+            y += BuildStoreSectionHeader(contentRt, "Coins", y, side) + gap;
+            y += BuildStoreItem(contentRt, "100 Coins",   "coins_100",  "\u20B910",  y, side) + gap;
+            y += BuildStoreItem(contentRt, "500 Coins",   "coins_500",  "\u20B940",  y, side) + gap;
+            y += BuildStoreItem(contentRt, "1,200 Coins", "coins_1200", "\u20B980",  y, side) + gap;
+            y += BuildStoreItem(contentRt, "3,000 Coins", "coins_3000", "\u20B9180", y, side) + gap;
 
-            BuildStoreSectionHeader(contentGo.transform, "Bundles");
-            BuildStoreBundleItem(contentGo.transform, "Starter Pack",
+            y += BuildStoreSectionHeader(contentRt, "Gems", y, side) + gap;
+            y += BuildStoreItem(contentRt, "5 Diamonds",  "gems_5",  "\u20B910", y, side) + gap;
+            y += BuildStoreItem(contentRt, "20 Diamonds", "gems_20", "\u20B930", y, side) + gap;
+            y += BuildStoreItem(contentRt, "60 Diamonds", "gems_60", "\u20B980", y, side) + gap;
+
+            y += BuildStoreSectionHeader(contentRt, "Bundles", y, side) + gap;
+            y += BuildStoreBundleItem(contentRt, "Starter Pack",
                 "500 Coins + 10 Diamonds + 5 Lives", "bundle_starter", "\u20B950",
-                new Color32(255, 200, 0, 255));
-            BuildStoreBundleItem(contentGo.transform, "Pro Pack",
+                new Color32(255, 200, 0, 255), y, side) + gap;
+            y += BuildStoreBundleItem(contentRt, "Pro Pack",
                 "2,000 Coins + 50 Diamonds + No Ads", "bundle_pro", "\u20B9150",
-                new Color32(180, 100, 255, 255));
+                new Color32(180, 100, 255, 255), y, side);
+
+            // Content height = total stacked extent. ScrollRect uses this for scroll range.
+            contentRt.sizeDelta = new Vector2(0f, y + padBottom);
 
             return panel.gameObject;
         }
 
-        void BuildStoreSectionHeader(Transform parent, string title)
+        float BuildStoreSectionHeader(RectTransform contentRt, string title, float y, float sideInset)
         {
+            const float h = 36f;
             var go = new GameObject("Section_" + title, typeof(RectTransform));
-            go.transform.SetParent(parent, false);
-            go.AddComponent<LayoutElement>().preferredHeight = 36f;
+            go.transform.SetParent(contentRt, false);
+            RowTopStretch(go.GetComponent<RectTransform>(), y, h, sideInset);
             go.AddComponent<Image>().color = new Color(1f, 1f, 1f, 0.05f);
-            var hlg = go.AddComponent<HorizontalLayoutGroup>();
-            hlg.padding = new RectOffset(12, 12, 6, 6);
-            hlg.childAlignment = TextAnchor.MiddleLeft;
-            hlg.childControlWidth  = true;
-            hlg.childControlHeight = true;
-            hlg.childForceExpandWidth  = false;
-            hlg.childForceExpandHeight = true;
-            hlg.spacing = 6f;
-            MkImgSlot(go.transform, "SecIco", new Color(0.75f, 0.75f, 0.75f, 1f), 18f, 18f);
+
+            var ico = MkImgSlot(go.transform, "SecIco",
+                new Color(0.75f, 0.75f, 0.75f, 1f), 18f, 18f);
+            ML(ico.rectTransform, 12f, 18f, 18f);
+
             var lbl = MkTxt(go.transform, "Lbl", title, 13,
                 new Color(0.75f, 0.75f, 0.75f, 1f), TextAnchor.MiddleLeft, bold: true);
-            lbl.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
+            ML(lbl.rectTransform, 36f, 200f, 22f);
+
+            return h;
         }
 
-        void BuildStoreItem(Transform parent, string icon, string name, string itemId,
-            int amount, string price)
+        float BuildStoreItem(RectTransform contentRt, string name, string itemId,
+            string price, float y, float sideInset)
         {
+            const float h        = 66f;
+            const float iconSize = 44f;
+            const float iconLeft = 14f;
+            const float textLeft = iconLeft + iconSize + 10f;
+            const float buyW     = 72f;
+            const float buyRight = 14f;
+            const float textRightPad = textLeft + buyW + buyRight;
+
             var go = new GameObject("Item_" + name, typeof(RectTransform));
-            go.transform.SetParent(parent, false);
+            go.transform.SetParent(contentRt, false);
+            RowTopStretch(go.GetComponent<RectTransform>(), y, h, sideInset);
             go.AddComponent<Image>().color = new Color(1f, 1f, 1f, 0.04f);
             go.AddComponent<Outline>().effectColor = new Color(1f, 1f, 1f, 0.08f);
-            go.AddComponent<LayoutElement>().preferredHeight = 66f;
-            var hlg = go.AddComponent<HorizontalLayoutGroup>();
-            hlg.padding = new RectOffset(14, 14, 10, 10);
-            hlg.spacing = 10f;
-            hlg.childAlignment = TextAnchor.MiddleLeft;
-            hlg.childControlWidth  = true;
-            hlg.childControlHeight = true;
-            hlg.childForceExpandWidth  = false;
-            hlg.childForceExpandHeight = true;
-            var iconImg = MkImgSlot(go.transform, "Icon", Color.white, 44f, 44f);
-            iconImg.gameObject.GetComponent<LayoutElement>().preferredWidth = 44f;
-            var nameColGo = new GameObject("NameCol", typeof(RectTransform));
-            nameColGo.transform.SetParent(go.transform, false);
-            nameColGo.AddComponent<LayoutElement>().flexibleWidth = 1f;
-            var nameV = nameColGo.AddComponent<VerticalLayoutGroup>();
-            nameV.childAlignment = TextAnchor.MiddleLeft;
-            nameV.childControlWidth  = true;
-            nameV.childControlHeight = true;
-            nameV.childForceExpandWidth  = true;
-            nameV.childForceExpandHeight = false;
-            nameV.spacing = 2f;
-            var nLbl = MkTxt(nameColGo.transform, "Name", name, 14, Color.white,
+
+            var iconImg = MkImgSlot(go.transform, "Icon", Color.white, iconSize, iconSize);
+            ML(iconImg.rectTransform, iconLeft, iconSize, iconSize);
+
+            var nLbl = MkTxt(go.transform, "Name", name, 14, Color.white,
                 TextAnchor.MiddleLeft, bold: true);
-            nLbl.gameObject.AddComponent<LayoutElement>().preferredHeight = 20f;
-            var dLbl = MkTxt(nameColGo.transform, "Desc", "One-time purchase", 10,
+            var nRt = nLbl.rectTransform;
+            nRt.anchorMin = new Vector2(0f, 1f);
+            nRt.anchorMax = new Vector2(1f, 1f);
+            nRt.pivot     = new Vector2(0f, 1f);
+            nRt.sizeDelta = new Vector2(-textRightPad, 22f);
+            nRt.anchoredPosition = new Vector2(textLeft, -14f);
+
+            var dLbl = MkTxt(go.transform, "Desc", "One-time purchase", 10,
                 new Color(0.55f, 0.55f, 0.55f, 1f), TextAnchor.MiddleLeft);
-            dLbl.gameObject.AddComponent<LayoutElement>().preferredHeight = 16f;
+            var dRt = dLbl.rectTransform;
+            dRt.anchorMin = new Vector2(0f, 1f);
+            dRt.anchorMax = new Vector2(1f, 1f);
+            dRt.pivot     = new Vector2(0f, 1f);
+            dRt.sizeDelta = new Vector2(-textRightPad, 16f);
+            dRt.anchoredPosition = new Vector2(textLeft, -38f);
+
             var buyBtn = CreateButton(go.transform, price + "\nBUY",
                 StepDevilPalette.Safe, () => OnBuyItem(itemId, name, 0));
-            buyBtn.gameObject.AddComponent<LayoutElement>().preferredWidth = 72f;
+            MR(buyBtn.GetComponent<RectTransform>(), buyRight, buyW, 46f);
             var bLbl = buyBtn.GetComponentInChildren<TextMeshProUGUI>();
             if (bLbl != null) { bLbl.fontSize = 11f; bLbl.enableWordWrapping = true; }
+
+            return h;
         }
 
-        void BuildStoreBundleItem(Transform parent, string name, string desc, string itemId,
-            string price, Color32 accent)
+        float BuildStoreBundleItem(RectTransform contentRt, string name, string desc, string itemId,
+            string price, Color32 accent, float y, float sideInset)
         {
+            const float h         = 78f;
+            const float badgeSize = 40f;
+            const float badgeLeft = 14f;
+            const float textLeft  = badgeLeft + badgeSize + 10f;
+            const float buyW      = 72f;
+            const float buyRight  = 14f;
+            const float textRightPad = textLeft + buyW + buyRight;
+
             var go = new GameObject("Bundle_" + name, typeof(RectTransform));
-            go.transform.SetParent(parent, false);
+            go.transform.SetParent(contentRt, false);
+            RowTopStretch(go.GetComponent<RectTransform>(), y, h, sideInset);
             go.AddComponent<Image>().color =
                 new Color(accent.r/255f, accent.g/255f, accent.b/255f, 0.12f);
             var ol = go.AddComponent<Outline>();
             ol.effectColor = new Color(accent.r/255f, accent.g/255f, accent.b/255f, 0.5f);
             ol.effectDistance = new Vector2(2f, 2f);
-            go.AddComponent<LayoutElement>().preferredHeight = 78f;
-            var hlg = go.AddComponent<HorizontalLayoutGroup>();
-            hlg.padding = new RectOffset(14, 14, 12, 12);
-            hlg.spacing = 10f;
-            hlg.childAlignment = TextAnchor.MiddleLeft;
-            hlg.childControlWidth  = true;
-            hlg.childControlHeight = true;
-            hlg.childForceExpandWidth  = false;
-            hlg.childForceExpandHeight = true;
-            var badge = MkImgSlot(go.transform, "Badge", accent, 40f, 40f);
-            badge.gameObject.GetComponent<LayoutElement>().preferredWidth = 40f;
-            var colGo = new GameObject("Col", typeof(RectTransform));
-            colGo.transform.SetParent(go.transform, false);
-            colGo.AddComponent<LayoutElement>().flexibleWidth = 1f;
-            var colV = colGo.AddComponent<VerticalLayoutGroup>();
-            colV.childAlignment = TextAnchor.MiddleLeft;
-            colV.childControlWidth  = true;
-            colV.childControlHeight = true;
-            colV.childForceExpandWidth  = true;
-            colV.childForceExpandHeight = false;
-            colV.spacing = 4f;
-            var cnLbl = MkTxt(colGo.transform, "Name", name, 15, accent,
+
+            var badge = MkImgSlot(go.transform, "Badge", accent, badgeSize, badgeSize);
+            ML(badge.rectTransform, badgeLeft, badgeSize, badgeSize);
+
+            var cnLbl = MkTxt(go.transform, "Name", name, 15, accent,
                 TextAnchor.MiddleLeft, bold: true);
-            cnLbl.gameObject.AddComponent<LayoutElement>().preferredHeight = 22f;
-            var cdLbl = MkTxt(colGo.transform, "Desc", desc, 10,
+            var nRt = cnLbl.rectTransform;
+            nRt.anchorMin = new Vector2(0f, 1f);
+            nRt.anchorMax = new Vector2(1f, 1f);
+            nRt.pivot     = new Vector2(0f, 1f);
+            nRt.sizeDelta = new Vector2(-textRightPad, 24f);
+            nRt.anchoredPosition = new Vector2(textLeft, -14f);
+
+            var cdLbl = MkTxt(go.transform, "Desc", desc, 10,
                 new Color(0.7f, 0.7f, 0.7f, 1f), TextAnchor.MiddleLeft, wrap: true);
-            cdLbl.gameObject.AddComponent<LayoutElement>().preferredHeight = 28f;
+            var dRt = cdLbl.rectTransform;
+            dRt.anchorMin = new Vector2(0f, 1f);
+            dRt.anchorMax = new Vector2(1f, 1f);
+            dRt.pivot     = new Vector2(0f, 1f);
+            dRt.sizeDelta = new Vector2(-textRightPad, 30f);
+            dRt.anchoredPosition = new Vector2(textLeft, -40f);
+
             var buyBtn = CreateButton(go.transform, price + "\nBUY",
                 new Color(accent.r/255f, accent.g/255f, accent.b/255f, 0.8f),
                 () => OnBuyItem(itemId, name, 0));
-            buyBtn.gameObject.AddComponent<LayoutElement>().preferredWidth = 72f;
+            MR(buyBtn.GetComponent<RectTransform>(), buyRight, buyW, 52f);
             var bLbl = buyBtn.GetComponentInChildren<TextMeshProUGUI>();
             if (bLbl != null) { bLbl.fontSize = 11f; bLbl.enableWordWrapping = true; }
+
+            return h;
         }
 
         // ─────────────────────────────────────────────────────────────────────
