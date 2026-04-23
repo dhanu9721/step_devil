@@ -329,7 +329,7 @@ namespace StepDevil
 
             var viewportGo = new GameObject("Viewport", typeof(RectTransform));
             viewportGo.transform.SetParent(scrollGo.transform, false);
-            SI(viewportGo.AddComponent<RectTransform>());
+            SI(viewportGo.GetComponent<RectTransform>());
             viewportGo.AddComponent<Image>().color = Color.white;
             viewportGo.AddComponent<Mask>().showMaskGraphic = false;
 
@@ -601,7 +601,7 @@ namespace StepDevil
             // Centre level badge
             var midGo = new GameObject("Mid", typeof(RectTransform));
             midGo.transform.SetParent(headerGo.transform, false);
-            SI(midGo.AddComponent<RectTransform>(), 56f, 6f, 110f, 6f);
+            SI(midGo.GetComponent<RectTransform>(), 56f, 6f, 110f, 6f);
             midGo.AddComponent<Image>().color = new Color(0.6f, 0.2f, 1f, 0.18f);
 
             _levelNum = MkTxt(midGo.transform, "LvlNum", "1", 22, Color.white,
@@ -621,7 +621,7 @@ namespace StepDevil
             // Coins row (top of right panel)
             var coinsRowGo = new GameObject("Coins", typeof(RectTransform));
             coinsRowGo.transform.SetParent(rightGo.transform, false);
-            TC(coinsRowGo.AddComponent<RectTransform>(), 0f, 104f, 24f);
+            TC(coinsRowGo.GetComponent<RectTransform>(), 0f, 104f, 24f);
             var coinsIco = MkImgSlot(coinsRowGo.transform, "Ico", StepDevilPalette.Gold, 14f, 14f);
             ML(coinsIco.rectTransform, 0f, 14f, 14f);
             _coinsText = MkTxt(coinsRowGo.transform, "Lbl", "0", 12, StepDevilPalette.Gold,
@@ -631,7 +631,7 @@ namespace StepDevil
             // Lives row (bottom of right panel)
             var livesRowGo = new GameObject("Lives", typeof(RectTransform));
             livesRowGo.transform.SetParent(rightGo.transform, false);
-            BC(livesRowGo.AddComponent<RectTransform>(), 0f, 104f, 24f);
+            BC(livesRowGo.GetComponent<RectTransform>(), 0f, 104f, 24f);
             var heartIco = MkImgSlot(livesRowGo.transform, "Ico", new Color32(255, 80, 80, 255), 14f, 14f);
             ML(heartIco.rectTransform, 0f, 14f, 14f);
             _livesText = MkTxt(livesRowGo.transform, "Lbl", "", 14, Color.white,
@@ -641,7 +641,7 @@ namespace StepDevil
             // ── Hint bar ──────────────────────────────────────────────────────
             var hintBarGo = new GameObject("Hint", typeof(RectTransform));
             hintBarGo.transform.SetParent(panel, false);
-            FWT(hintBarGo.AddComponent<RectTransform>(), 72f, 26f);
+            FWT(hintBarGo.GetComponent<RectTransform>(), 72f, 26f);
             hintBarGo.AddComponent<Image>().color = new Color(1f, 0.15f, 0.3f, 0.08f);
             _worldHint = MkTxt(hintBarGo.transform, "Whint", "", 9,
                 new Color(1f, 1f, 1f, 0.55f), TextAnchor.MiddleCenter, wrap: false);
@@ -652,7 +652,7 @@ namespace StepDevil
             // ── Devil tip bar (hidden by default) ─────────────────────────────
             var tipBarGo = new GameObject("DevilTip", typeof(RectTransform));
             tipBarGo.transform.SetParent(panel, false);
-            FWT(tipBarGo.AddComponent<RectTransform>(), 98f, 22f);
+            FWT(tipBarGo.GetComponent<RectTransform>(), 98f, 22f);
             tipBarGo.AddComponent<Image>().color = new Color(0.45f, 0.08f, 0.75f, 0.12f);
             _devilTipText = MkTxt(tipBarGo.transform, "Tip", "", 8,
                 new Color32(210, 160, 255, 200), TextAnchor.MiddleCenter, wrap: false);
@@ -664,7 +664,7 @@ namespace StepDevil
             // ── Progress / dots ───────────────────────────────────────────────
             var pathGo = new GameObject("Path", typeof(RectTransform));
             pathGo.transform.SetParent(panel, false);
-            FWT(pathGo.AddComponent<RectTransform>(), 120f, 42f);
+            FWT(pathGo.GetComponent<RectTransform>(), 120f, 42f);
 
             var pathLbl = MkTxt(pathGo.transform, "PathLbl", "PROGRESS", 8,
                 new Color(1f, 1f, 1f, 0.3f), TextAnchor.MiddleCenter, wrap: false);
@@ -672,13 +672,13 @@ namespace StepDevil
 
             var dotsRowGo = new GameObject("DotsRow", typeof(RectTransform));
             dotsRowGo.transform.SetParent(pathGo.transform, false);
-            FWB(dotsRowGo.AddComponent<RectTransform>(), 0f, 22f);
+            FWB(dotsRowGo.GetComponent<RectTransform>(), 0f, 22f);
             _pathDotsRoot = dotsRowGo.GetComponent<RectTransform>();
 
             // ── Mirror banner (hidden by default) ─────────────────────────────
             var mirrorGo = new GameObject("Mirror", typeof(RectTransform));
             mirrorGo.transform.SetParent(panel, false);
-            FWT(mirrorGo.AddComponent<RectTransform>(), 162f, 22f);
+            FWT(mirrorGo.GetComponent<RectTransform>(), 162f, 22f);
             _mirrorBanner = MkTxt(mirrorGo.transform, "Lbl",
                 "! LEFT \u2194 RIGHT FLIPPED!", 10, StepDevilPalette.Purple,
                 TextAnchor.MiddleCenter, wrap: false);
@@ -688,7 +688,7 @@ namespace StepDevil
             // ── Blip character ────────────────────────────────────────────────
             var charAreaGo = new GameObject("Char", typeof(RectTransform));
             charAreaGo.transform.SetParent(panel, false);
-            TC(charAreaGo.AddComponent<RectTransform>(), 192f, 340f, 80f);
+            TC(charAreaGo.GetComponent<RectTransform>(), 192f, 340f, 80f);
 
             var blipRootGo = new GameObject("BlipRoot", typeof(RectTransform));
             blipRootGo.transform.SetParent(charAreaGo.transform, false);
@@ -712,7 +712,7 @@ namespace StepDevil
             // ── Stones area (fills space between blip and timer bar) ──────────
             var stonesGo = new GameObject("Stones", typeof(RectTransform));
             stonesGo.transform.SetParent(panel, false);
-            SI(stonesGo.AddComponent<RectTransform>(), 10f, 280f, 10f, 48f);
+            SI(stonesGo.GetComponent<RectTransform>(), 10f, 280f, 10f, 48f);
             _stonesRoot = stonesGo.GetComponent<RectTransform>();
 
             return panel.gameObject;
@@ -762,7 +762,7 @@ namespace StepDevil
             // Header: icon + label
             var headGo = new GameObject("Head", typeof(RectTransform));
             headGo.transform.SetParent(panel, false);
-            TC(headGo.AddComponent<RectTransform>(), 28f, 362f, 34f);
+            TC(headGo.GetComponent<RectTransform>(), 28f, 362f, 34f);
             var headIco = MkImgSlot(headGo.transform, "Ico", Color.white, 22f, 22f);
             ML(headIco.rectTransform, 0f, 22f, 22f);
             var headLbl = MkTxt(headGo.transform, "Lbl", "THE TRUTH REVEALED",
@@ -875,7 +875,7 @@ namespace StepDevil
             // Confetti root (particle effects spawned here at runtime)
             var confettiGo = new GameObject("Confetti", typeof(RectTransform));
             confettiGo.transform.SetParent(panel, false);
-            TC(confettiGo.AddComponent<RectTransform>(), 50f, 342f, 4f);
+            TC(confettiGo.GetComponent<RectTransform>(), 50f, 342f, 4f);
             _confettiRoot = confettiGo.GetComponent<RectTransform>();
 
             var winIcon = MkAnim(panel, "WinIcon", 88f, 88f);
@@ -893,7 +893,7 @@ namespace StepDevil
             // Stats 2×2 grid (absolute, no GridLayoutGroup)
             var statsGo = new GameObject("Stats", typeof(RectTransform));
             statsGo.transform.SetParent(panel, false);
-            TC(statsGo.AddComponent<RectTransform>(), 260f, 342f, 148f);
+            TC(statsGo.GetComponent<RectTransform>(), 260f, 342f, 148f);
 
             const float boxW = 161f, boxH = 64f, gapX = 10f, gapY = 10f;
             _completeCoins  = StatBox(statsGo.transform, TL_box(0,     0,    boxW, boxH), "0",  "Devil Coins");
@@ -947,7 +947,7 @@ namespace StepDevil
             // Title
             var spinTitle = new GameObject("Title", typeof(RectTransform));
             spinTitle.transform.SetParent(panel, false);
-            TC(spinTitle.AddComponent<RectTransform>(), 60f, 300f, 36f);
+            TC(spinTitle.GetComponent<RectTransform>(), 60f, 300f, 36f);
             var spinTitleIco = MkImgSlot(spinTitle.transform, "Ico", StepDevilPalette.Gold, 26f, 26f);
             ML(spinTitleIco.rectTransform, 0f, 26f, 26f);
             var spinTitleLbl = MkTxt(spinTitle.transform, "Lbl", "DAILY SPIN",
@@ -957,11 +957,11 @@ namespace StepDevil
             // Wallet row
             var walletGo = new GameObject("WalletRow", typeof(RectTransform));
             walletGo.transform.SetParent(panel, false);
-            TC(walletGo.AddComponent<RectTransform>(), 104f, 280f, 24f);
+            TC(walletGo.GetComponent<RectTransform>(), 104f, 280f, 24f);
 
             var swCoinsGo = new GameObject("Coins", typeof(RectTransform));
             swCoinsGo.transform.SetParent(walletGo.transform, false);
-            MC(swCoinsGo.AddComponent<RectTransform>(), -68f, 0f, 120f, 22f);
+            MC(swCoinsGo.GetComponent<RectTransform>(), -68f, 0f, 120f, 22f);
             var swCIco = MkImgSlot(swCoinsGo.transform, "Ico", StepDevilPalette.Gold, 16f, 16f);
             ML(swCIco.rectTransform, 0f, 16f, 16f);
             var swCLbl = MkTxt(swCoinsGo.transform, "Lbl",
@@ -971,7 +971,7 @@ namespace StepDevil
 
             var swGemsGo = new GameObject("Diamonds", typeof(RectTransform));
             swGemsGo.transform.SetParent(walletGo.transform, false);
-            MC(swGemsGo.AddComponent<RectTransform>(), 68f, 0f, 120f, 22f);
+            MC(swGemsGo.GetComponent<RectTransform>(), 68f, 0f, 120f, 22f);
             var swGIco = MkImgSlot(swGemsGo.transform, "Ico", new Color32(100, 220, 255, 255), 16f, 16f);
             ML(swGIco.rectTransform, 0f, 16f, 16f);
             var swGLbl = MkTxt(swGemsGo.transform, "Lbl",
@@ -982,7 +982,7 @@ namespace StepDevil
             // Wheel frame
             var wheelFrameGo = new GameObject("WheelFrame", typeof(RectTransform));
             wheelFrameGo.transform.SetParent(panel, false);
-            TC(wheelFrameGo.AddComponent<RectTransform>(), 136f, 290f, 290f);
+            TC(wheelFrameGo.GetComponent<RectTransform>(), 136f, 290f, 290f);
             wheelFrameGo.AddComponent<Image>().color = new Color32(20, 14, 42, 255);
 
             // Rotating wheel container
@@ -1018,7 +1018,7 @@ namespace StepDevil
             // Center circle
             var centerGo = new GameObject("CenterCircle", typeof(RectTransform));
             centerGo.transform.SetParent(wheelFrameGo.transform, false);
-            MC(centerGo.AddComponent<RectTransform>(), 0f, 0f, 72f, 72f);
+            MC(centerGo.GetComponent<RectTransform>(), 0f, 0f, 72f, 72f);
             centerGo.AddComponent<Image>().color = new Color32(14, 8, 30, 255);
             var ctrImg = MkImgSlot(centerGo.transform, "Ctr", Color.white, 48f, 48f);
             MC(ctrImg.rectTransform, 0f, 0f, 48f, 48f);
@@ -1071,7 +1071,7 @@ namespace StepDevil
 
             var drTitle = new GameObject("Title", typeof(RectTransform));
             drTitle.transform.SetParent(panel, false);
-            TC(drTitle.AddComponent<RectTransform>(), 70f, 300f, 36f);
+            TC(drTitle.GetComponent<RectTransform>(), 70f, 300f, 36f);
             var drIco = MkImgSlot(drTitle.transform, "Ico", new Color32(180, 100, 255, 255), 26f, 26f);
             ML(drIco.rectTransform, 0f, 26f, 26f);
             var drLbl = MkTxt(drTitle.transform, "Lbl", "DAILY REWARDS",
@@ -1170,7 +1170,7 @@ namespace StepDevil
             // Chest emoji / animated image
             var emojiGo = new GameObject("ChestEmoji", typeof(RectTransform));
             emojiGo.transform.SetParent(panel, false);
-            TC(emojiGo.AddComponent<RectTransform>(), 110f, 120f, 120f);
+            TC(emojiGo.GetComponent<RectTransform>(), 110f, 120f, 120f);
             _chestEmoji = emojiGo.AddComponent<Image>();
             _chestEmoji.color = Color.white;
             _chestEmoji.preserveAspect = true;
@@ -1185,7 +1185,7 @@ namespace StepDevil
             // Reward card
             var cardGo = new GameObject("Card", typeof(RectTransform));
             cardGo.transform.SetParent(panel, false);
-            TC(cardGo.AddComponent<RectTransform>(), 282f, 280f, 90f);
+            TC(cardGo.GetComponent<RectTransform>(), 282f, 280f, 90f);
             cardGo.AddComponent<Image>().color = new Color32(255, 209, 102, 30);
 
             _chestRewardValue = MkTxt(cardGo.transform, "Value", "+25", 42,
@@ -1218,13 +1218,13 @@ namespace StepDevil
             // Header
             var headerGo = new GameObject("Header", typeof(RectTransform));
             headerGo.transform.SetParent(panel, false);
-            FWT(headerGo.AddComponent<RectTransform>(), topPad, headerH);
+            FWT(headerGo.GetComponent<RectTransform>(), topPad, headerH);
             headerGo.AddComponent<Image>().color = new Color(1f, 1f, 1f, 0.04f);
 
             // Title
             var storeTitle = new GameObject("Title", typeof(RectTransform));
             storeTitle.transform.SetParent(headerGo.transform, false);
-            SI(storeTitle.AddComponent<RectTransform>());
+            SI(storeTitle.GetComponent<RectTransform>());
             var stIco = MkImgSlot(storeTitle.transform, "Ico", Color.white, 22f, 22f);
             MC(stIco.rectTransform, -60f, 0f, 22f, 22f);
             var stLbl = MkTxt(storeTitle.transform, "Lbl", "STORE",
@@ -1242,11 +1242,11 @@ namespace StepDevil
             // Scroll area
             var scrollHolder = new GameObject("ScrollHolder", typeof(RectTransform));
             scrollHolder.transform.SetParent(panel, false);
-            SI(scrollHolder.AddComponent<RectTransform>(), 0f, topPad + headerH, 0f, 0f);
+            SI(scrollHolder.GetComponent<RectTransform>(), 0f, topPad + headerH, 0f, 0f);
 
             var scrollGo = new GameObject("ScrollView", typeof(RectTransform));
             scrollGo.transform.SetParent(scrollHolder.transform, false);
-            SI(scrollGo.AddComponent<RectTransform>());
+            SI(scrollGo.GetComponent<RectTransform>());
 
             var sr = scrollGo.AddComponent<ScrollRect>();
             sr.horizontal = false;
@@ -1259,7 +1259,7 @@ namespace StepDevil
 
             var viewportGo = new GameObject("Viewport", typeof(RectTransform));
             viewportGo.transform.SetParent(scrollGo.transform, false);
-            SI(viewportGo.AddComponent<RectTransform>());
+            SI(viewportGo.GetComponent<RectTransform>());
             viewportGo.AddComponent<Image>().color = Color.white;
             viewportGo.AddComponent<Mask>().showMaskGraphic = false;
 
@@ -1533,7 +1533,7 @@ namespace StepDevil
             // Title icon+label (centered)
             var titleGo = new GameObject("Title", typeof(RectTransform));
             titleGo.transform.SetParent(cardRt, false);
-            TC(titleGo.AddComponent<RectTransform>(), 22f, 252f, 36f);
+            TC(titleGo.GetComponent<RectTransform>(), 22f, 252f, 36f);
             var tIco = MkImgSlot(titleGo.transform, "Ico", StepDevilPalette.Accent, 20f, 20f);
             ML(tIco.rectTransform, 0f, 20f, 20f);
             var tLbl = MkTxt(titleGo.transform, "Lbl", "Leave Level?",
@@ -1550,7 +1550,7 @@ namespace StepDevil
             // Button row
             var btnRowGo = new GameObject("Buttons", typeof(RectTransform));
             btnRowGo.transform.SetParent(cardRt, false);
-            FWB(btnRowGo.AddComponent<RectTransform>(), 0f, 46f);
+            FWB(btnRowGo.GetComponent<RectTransform>(), 0f, 46f);
 
             var noBtn = CreateButton(btnRowGo.transform, "NO, STAY",
                 new Color(0.15f, 0.55f, 0.2f, 0.35f), OnLeaveNo);
@@ -1583,7 +1583,7 @@ namespace StepDevil
             // Art area
             var artGo = new GameObject("Art", typeof(RectTransform));
             artGo.transform.SetParent(cardRt, false);
-            FWT(artGo.AddComponent<RectTransform>(), 53f, 130f);
+            FWT(artGo.GetComponent<RectTransform>(), 53f, 130f);
             artGo.AddComponent<Image>().color = new Color(0.04f, 0.06f, 0.18f, 1f);
             artGo.AddComponent<Outline>().effectColor = new Color(0.3f, 0.5f, 1f, 0.25f);
             var artIcon = MkAnim(artGo.transform, "ArtIcon", 60f, 60f);
@@ -1660,7 +1660,7 @@ namespace StepDevil
             // Title icon+label (leaves 44px on right for close btn)
             var titleContainer = new GameObject("TitleArea", typeof(RectTransform));
             titleContainer.transform.SetParent(hdrGo.transform, false);
-            SI(titleContainer.AddComponent<RectTransform>(), 0f, 0f, 44f, 0f);
+            SI(titleContainer.GetComponent<RectTransform>(), 0f, 0f, 44f, 0f);
             var tIco = MkImgSlot(titleContainer.transform, "Ico", titleColor, 20f, 20f);
             ML(tIco.rectTransform, 0f, 20f, 20f);
             outLbl = MkTxt(titleContainer.transform, "Lbl", title,
@@ -1681,7 +1681,7 @@ namespace StepDevil
         {
             var go = new GameObject("Divider", typeof(RectTransform));
             go.transform.SetParent(cardRt, false);
-            FWT(go.AddComponent<RectTransform>(), y, 1f);
+            FWT(go.GetComponent<RectTransform>(), y, 1f);
             go.AddComponent<Image>().color = new Color(1f, 1f, 1f, 0.1f);
         }
 
@@ -1691,7 +1691,7 @@ namespace StepDevil
         {
             var rowGo = new GameObject("Row_" + label, typeof(RectTransform));
             rowGo.transform.SetParent(cardRt, false);
-            FWT(rowGo.AddComponent<RectTransform>(), y, 46f);
+            FWT(rowGo.GetComponent<RectTransform>(), y, 46f);
             rowGo.AddComponent<Image>().color = new Color(1f, 1f, 1f, 0.04f);
 
             var icoImg = MkImgSlot(rowGo.transform, "Ico", Color.white, 20f, 20f);
@@ -1844,7 +1844,7 @@ namespace StepDevil
             // Icon (top-centre of tile)
             var iconGo = new GameObject("Icon", typeof(RectTransform));
             iconGo.transform.SetParent(rt, false);
-            TC(iconGo.AddComponent<RectTransform>(), 10f, 28f, 28f);
+            TC(iconGo.GetComponent<RectTransform>(), 10f, 28f, 28f);
             var iconImg = iconGo.AddComponent<Image>();
             iconImg.color = Color.white;
             iconImg.preserveAspect = true;
