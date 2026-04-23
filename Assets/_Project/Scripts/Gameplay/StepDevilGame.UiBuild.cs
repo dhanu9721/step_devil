@@ -5,6 +5,15 @@ using UnityEngine.UI;
 
 namespace StepDevil
 {
+    /// <summary>Controls how CreateText sizes itself inside its parent.</summary>
+    public enum UiTextMode
+    {
+        /// <summary>Stretch-to-fill the parent RectTransform.</summary>
+        FillParent,
+        /// <summary>Attach a LayoutElement with preferredWidth/preferredHeight for use inside a LayoutGroup.</summary>
+        LayoutVerticalBlock,
+    }
+
     public sealed partial class StepDevilGame
     {
         // ─────────────────────────────────────────────────────────────────────
@@ -115,6 +124,10 @@ namespace StepDevil
             rt.sizeDelta = new Vector2(-sideInset * 2f, h);
             rt.anchoredPosition = new Vector2(0f, -y);
         }
+
+        /// <summary>SI overload for Transform — every UI GameObject's Transform is actually a RectTransform.</summary>
+        static void SI(Transform t, float l = 0f, float top = 0f, float r = 0f, float b = 0f)
+            => SI((RectTransform)t, l, top, r, b);
 
         static void StretchFull(RectTransform rt) => SI(rt);
 
@@ -1883,6 +1896,68 @@ namespace StepDevil
             img.raycastTarget = false;
             EnsureUiImageHasSprite(img);
             return img;
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        //  Layout-aware helpers used by Round.cs (truth rows, stone widgets, daily
+        //  reward cards, floating text). They attach LayoutElements so parents
+        //  using HorizontalLayoutGroup / VerticalLayoutGroup can size them.
+        // ─────────────────────────────────────────────────────────────────────
+
+        RectTransform CreatePanel(Transform parent, string name, Color bg,
+            Vector2 anchorMin, Vector2 anchorMax, Vector2 offsetMin, Vector2 offsetMax)
+        {
+            var go = new GameObject(name, typeof(RectTransform));
+            go.transform.SetParent(parent, false);
+            var rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = anchorMin;
+            rt.anchorMax = anchorMax;
+            rt.offsetMin = offsetMin;
+            rt.offsetMax = offsetMax;
+            if (bg.a > 0f)
+            {
+                var img = go.AddComponent<Image>();
+                img.color = bg;
+                img.raycastTarget = false;
+            }
+            return rt;
+        }
+
+        TextMeshProUGUI CreateText(Transform parent, string name, string txt, int sz, Color col,
+            TextAnchor align, bool bold, bool wrap, TMP_FontAsset font, UiTextMode mode,
+            float w = 0f, float h = 0f)
+        {
+            var t = MkTxt(parent, name, txt, sz, col, align, bold, wrap);
+            if (font != null) t.font = font;
+            if (mode == UiTextMode.FillParent)
+            {
+                SI(t.rectTransform);
+            }
+            else
+            {
+                var le = t.gameObject.AddComponent<LayoutElement>();
+                if (w > 0f) le.preferredWidth  = w;
+                if (h > 0f) le.preferredHeight = h;
+            }
+            return t;
+        }
+
+        Image CreateImgSlot(Transform parent, string name, Color tint, float w, float h)
+        {
+            var img = MkImgSlot(parent, name, tint, w, h);
+            var le = img.gameObject.AddComponent<LayoutElement>();
+            le.preferredWidth  = w;
+            le.preferredHeight = h;
+            return img;
+        }
+
+        SDSpriteAnimator CreateAnimSlot(Transform parent, string name, float w, float h)
+        {
+            var anim = MkAnim(parent, name, w, h);
+            var le = anim.gameObject.AddComponent<LayoutElement>();
+            le.preferredWidth  = w;
+            le.preferredHeight = h;
+            return anim;
         }
 
         // ─────────────────────────────────────────────────────────────────────
