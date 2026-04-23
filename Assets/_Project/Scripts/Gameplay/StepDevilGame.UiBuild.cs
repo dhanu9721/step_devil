@@ -710,9 +710,19 @@ namespace StepDevil
             _blipText = null;
 
             // ── Stones area (fills space between blip and timer bar) ──────────
+            // HorizontalLayoutGroup here is required: CreateStone in Round.cs spawns 2–4 stones
+            // with LayoutElement(preferredWidth=108), and they need to be laid out side-by-side.
             var stonesGo = new GameObject("Stones", typeof(RectTransform));
             stonesGo.transform.SetParent(panel, false);
             SI(stonesGo.GetComponent<RectTransform>(), 10f, 280f, 10f, 48f);
+            var stonesHlg = stonesGo.AddComponent<HorizontalLayoutGroup>();
+            stonesHlg.childAlignment = TextAnchor.MiddleCenter;
+            stonesHlg.spacing = 12f;
+            stonesHlg.padding = new RectOffset(4, 4, 4, 4);
+            stonesHlg.childControlWidth      = true;
+            stonesHlg.childControlHeight     = true;
+            stonesHlg.childForceExpandWidth  = false;
+            stonesHlg.childForceExpandHeight = false;
             _stonesRoot = stonesGo.GetComponent<RectTransform>();
 
             return panel.gameObject;
