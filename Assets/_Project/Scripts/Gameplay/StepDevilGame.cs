@@ -260,6 +260,30 @@ namespace StepDevil
                 _noLivesPopupGo.SetActive(false);
             }
 
+            // Popups / screens that BuildUi() creates in the code-built path but the
+            // scene-hierarchy path skips. Without these, Back/Store/Settings taps silently
+            // no-op because their target GameObject is null.
+            if (_rootRt != null && _settingsPopupGo == null)
+            {
+                _settingsPopupGo = BuildSettingsPopup(_rootRt);
+                _settingsPopupGo.SetActive(false);
+            }
+            if (_rootRt != null && _leavePopupGo == null)
+            {
+                _leavePopupGo = BuildLeavePopup(_rootRt);
+                _leavePopupGo.SetActive(false);
+            }
+            if (_rootRt != null && _noAdsPopupGo == null)
+            {
+                _noAdsPopupGo = BuildNoAdsPopup(_rootRt);
+                _noAdsPopupGo.SetActive(false);
+            }
+            if (_rootRt != null && _storeGo == null)
+            {
+                _storeGo = BuildStoreScreen(_rootRt);
+                _storeGo.SetActive(false);
+            }
+
             // Inject title extras (wallet bar + spin + rewards buttons) if not already built
             if (_spinButton == null && _titleGo != null)
                 InjectTitleExtras();
