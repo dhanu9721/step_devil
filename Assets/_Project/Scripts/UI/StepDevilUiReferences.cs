@@ -102,7 +102,8 @@ namespace StepDevil
             if (PathDotsRoot == null) yield return nameof(PathDotsRoot);
             if (BlipText == null && BlipController == null) yield return nameof(BlipText);
             // DevilAnim is optional — no missing-slot check
-            if (MirrorBanner == null) yield return nameof(MirrorBanner);
+            // MirrorBanner is optional — if absent, the flip logic still works, the
+            // player just won't see the "LEFT <-> RIGHT FLIPPED" warning banner.
             if (StonesRoot == null) yield return nameof(StonesRoot);
             if (TimerLabel == null) yield return nameof(TimerLabel);
             if (TimerFill == null) yield return nameof(TimerFill);

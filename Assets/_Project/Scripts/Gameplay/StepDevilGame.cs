@@ -60,6 +60,9 @@ namespace StepDevil
         [Tooltip("When true, use the Canvas/Root already in the scene (your Inspector edits persist). When false, Awake destroys children and rebuilds UI from code — every SDSpriteAnimator under this object is snapshotted by hierarchy path before destroy (title devilEmoji, blips, etc.) and restored after rebuild; you can still override blips with the arrays below.")]
         [SerializeField] bool _useHierarchyFromScene = true;
 
+        [Tooltip("When ON, every ShowScreen() re-runs defensive fixups: reorders Game-screen children, overwrites VLG/HLG flags, snaps Timer/Mirror/Blip TMPs to hard-coded anchors, and forces min widths on every TMP. Keep this on if your scene layout renders broken at runtime. Turn it OFF to trust your Inspector-authored positions, anchors and sizes as-is.")]
+        [SerializeField] bool _overrideSceneLayoutAtRuntime = true;
+
         [SerializeField] TMP_FontAsset _tmpFont;
 
         [Header("Blip sprites (code-built UI only)")]
@@ -1098,7 +1101,7 @@ namespace StepDevil
             if (rt == null)
                 return;
 
-            if (id == ScreenId.Game)
+            if (id == ScreenId.Game && _overrideSceneLayoutAtRuntime)
                 EnsureGameScreenLayout();
 
             Canvas.ForceUpdateCanvases();
@@ -1112,7 +1115,10 @@ namespace StepDevil
             if (id == ScreenId.Truth && _truthScroll != null && _truthScroll.content != null)
                 LayoutRebuilder.ForceRebuildLayoutImmediate(_truthScroll.content);
 
-            // Scene-built UI or first frame: TMP can still see near-zero width (one glyph per line).
+            // Defensive TMP width / anchor rewrites — only when the opt-in flag is on.
+            // When OFF, your Inspector-authored positions are trusted verbatim.
+            if (!_overrideSceneLayoutAtRuntime)
+                return;
             if (id == ScreenId.Truth)
                 SanitizeTruthScreenTmpWidths();
             SanitizeStackScreenTmpWidths(screen, id == ScreenId.Game ? 358f : 300f);

@@ -140,31 +140,36 @@ namespace StepDevil
                 _devilTipText.transform.parent.gameObject.SetActive(hasTip);
             }
 
-            var mirrorWasVisible = _mirrorBanner.gameObject.activeSelf;
-            _mirrorBanner.gameObject.SetActive(_mirror);
-            if (_mirror)
+            // MirrorBanner is optional — if the scene doesn't provide one, skip the
+            // visual hint. The left/right flip logic itself is driven by the _mirror
+            // flag and runs regardless of whether a banner exists.
+            if (_mirrorBanner != null)
             {
-                _mirrorBanner.text = $"! LEFT <-> RIGHT FLIPPED! ({_mirrorCd} left)";
-                var c = _mirrorBanner.color;
-                c.a = 1f;
-                _mirrorBanner.color = c;
-
-                // Looping blink (existing animation lib call that was previously unused) —
-                // keeps the MIRROR warning constantly eye-catching while active.
-                SDAnimationLibrary.MirrorBlink(_mirrorBanner);
-
-                // Pop-in scale on first activation so the player can't miss the rule change.
-                if (!mirrorWasVisible)
+                var mirrorWasVisible = _mirrorBanner.gameObject.activeSelf;
+                _mirrorBanner.gameObject.SetActive(_mirror);
+                if (_mirror)
                 {
-                    var bannerRt = _mirrorBanner.rectTransform;
-                    SDTween.Kill(bannerRt);
-                    bannerRt.localScale = Vector3.one * 0.6f;
-                    SDTween.Scale(bannerRt, Vector3.one, 0.35f).SetEase(SDEase.OutBack);
+                    _mirrorBanner.text = $"! LEFT <-> RIGHT FLIPPED! ({_mirrorCd} left)";
+                    var c = _mirrorBanner.color;
+                    c.a = 1f;
+                    _mirrorBanner.color = c;
+
+                    // Looping blink — keeps the MIRROR warning constantly eye-catching while active.
+                    SDAnimationLibrary.MirrorBlink(_mirrorBanner);
+
+                    // Pop-in scale on first activation so the player can't miss the rule change.
+                    if (!mirrorWasVisible)
+                    {
+                        var bannerRt = _mirrorBanner.rectTransform;
+                        SDTween.Kill(bannerRt);
+                        bannerRt.localScale = Vector3.one * 0.6f;
+                        SDTween.Scale(bannerRt, Vector3.one, 0.35f).SetEase(SDEase.OutBack);
+                    }
                 }
-            }
-            else
-            {
-                SDTween.Kill(_mirrorBanner);
+                else
+                {
+                    SDTween.Kill(_mirrorBanner);
+                }
             }
 
             RefreshPathDots();
