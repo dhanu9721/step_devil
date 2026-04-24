@@ -273,6 +273,52 @@ namespace StepDevil
             return panel.gameObject;
         }
 
+        /// <summary>Icon + number pill for the Title-screen wallet row. Auto-sized
+        /// (ContentSizeFitter) so the icon always hugs its label and the pill reads
+        /// as a single unit, never a 120px placeholder with the content clumped to one side.</summary>
+        void BuildWalletPill(RectTransform parent, string name, Color32 tint,
+            out TextMeshProUGUI labelOut, System.Func<string> initialText)
+        {
+            var pillGo = new GameObject(name, typeof(RectTransform));
+            pillGo.transform.SetParent(parent, false);
+            var pillRt = pillGo.GetComponent<RectTransform>();
+            pillRt.anchorMin = pillRt.anchorMax = new Vector2(0.5f, 0.5f);
+            pillRt.pivot     = new Vector2(0.5f, 0.5f);
+            pillRt.sizeDelta = new Vector2(0f, 24f); // width driven by ContentSizeFitter
+
+            var pillH = pillGo.AddComponent<HorizontalLayoutGroup>();
+            pillH.childAlignment         = TextAnchor.MiddleCenter;
+            pillH.spacing                = 6f;
+            pillH.padding                = new RectOffset(0, 0, 0, 0);
+            pillH.childForceExpandWidth  = false;
+            pillH.childForceExpandHeight = false;
+            pillH.childControlWidth      = true;
+            pillH.childControlHeight     = true;
+
+            var pillFitter = pillGo.AddComponent<ContentSizeFitter>();
+            pillFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            pillFitter.verticalFit   = ContentSizeFitter.FitMode.Unconstrained;
+
+            // Icon sits first.
+            var icoImg = new GameObject("Ico", typeof(RectTransform)).AddComponent<Image>();
+            icoImg.transform.SetParent(pillRt, false);
+            icoImg.color = tint;
+            icoImg.preserveAspect = true;
+            icoImg.raycastTarget = false;
+            EnsureUiImageHasSprite(icoImg);
+            var icoLe = icoImg.gameObject.AddComponent<LayoutElement>();
+            icoLe.preferredWidth = 16f;
+            icoLe.preferredHeight = 16f;
+            icoLe.minWidth = 16f;
+
+            // Label sits second.
+            labelOut = MkTxt(pillRt, "Lbl", initialText?.Invoke() ?? "0", 12,
+                tint, TextAnchor.MiddleLeft, bold: true, wrap: false);
+            var lblLe = labelOut.gameObject.AddComponent<LayoutElement>();
+            lblLe.minWidth = 20f;
+            lblLe.preferredHeight = 22f;
+        }
+
         void BuildTitleBottomBar(Transform parent)
         {
             const float barH = 140f;
@@ -283,35 +329,32 @@ namespace StepDevil
             FWB(barRt, 0f, barH);
             barGo.AddComponent<Image>().color = new Color32(10, 8, 22, 230);
 
-            // Wallet row (coins + diamonds) — absolute top of bar
+            // Wallet row (coins + diamonds) — absolute top of bar, centered.
+            //
+            // Layout: WalletRow (HLG, center-aligned) ──┬── Coins pill  (HLG: icon + text)
+            //                                           └── Diamonds pill (HLG: icon + text)
+            //
+            // Each pill auto-sizes via a ContentSizeFitter so the icon always sits
+            // right next to its number, and the two pills sit symmetrically around
+            // the centre with a fixed gap between them.
             var walletGo = new GameObject("WalletRow", typeof(RectTransform));
             walletGo.transform.SetParent(barGo.transform, false);
             var walletRt = walletGo.GetComponent<RectTransform>();
-            TC(walletRt, 8f, 280f, 24f);
+            TC(walletRt, 8f, 280f, 26f);
+            var walletH = walletGo.AddComponent<HorizontalLayoutGroup>();
+            walletH.childAlignment      = TextAnchor.MiddleCenter;
+            walletH.spacing             = 36f;   // equal gap between the two pills
+            walletH.childForceExpandWidth  = false;
+            walletH.childForceExpandHeight = false;
+            walletH.childControlWidth      = true;
+            walletH.childControlHeight     = true;
 
-            // Coins icon+label
-            var coinsGo = new GameObject("Coins", typeof(RectTransform));
-            coinsGo.transform.SetParent(walletRt, false);
-            var coinsRt = coinsGo.GetComponent<RectTransform>();
-            MC(coinsRt, -68f, 0f, 120f, 22f);
-            var coinsIco = MkImgSlot(coinsGo.transform, "Ico", StepDevilPalette.Gold, 16f, 16f);
-            ML(coinsIco.rectTransform, 0f, 16f, 16f);
-            _titleCoinsText = MkTxt(coinsGo.transform, "Lbl",
-                StepDevilWallet.Coins.ToString(), 12, StepDevilPalette.Gold,
-                TextAnchor.MiddleLeft, bold: true);
-            SI(_titleCoinsText.rectTransform, 21f, 0f, 0f, 0f);
-
-            // Diamonds icon+label
-            var gemsGo = new GameObject("Diamonds", typeof(RectTransform));
-            gemsGo.transform.SetParent(walletRt, false);
-            var gemsRt = gemsGo.GetComponent<RectTransform>();
-            MC(gemsRt, 68f, 0f, 120f, 22f);
-            var gemsIco = MkImgSlot(gemsGo.transform, "Ico", new Color32(100, 220, 255, 255), 16f, 16f);
-            ML(gemsIco.rectTransform, 0f, 16f, 16f);
-            _titleDiamondsText = MkTxt(gemsGo.transform, "Lbl",
-                StepDevilWallet.Diamonds.ToString(), 12, new Color32(100, 220, 255, 255),
-                TextAnchor.MiddleLeft, bold: true);
-            SI(_titleDiamondsText.rectTransform, 21f, 0f, 0f, 0f);
+            BuildWalletPill(walletRt, "Coins",
+                StepDevilPalette.Gold, out _titleCoinsText,
+                () => StepDevilWallet.Coins.ToString());
+            BuildWalletPill(walletRt, "Diamonds",
+                new Color32(100, 220, 255, 255), out _titleDiamondsText,
+                () => StepDevilWallet.Diamonds.ToString());
 
             // Horizontal scroll strip
             var scrollGo = new GameObject("ActionScroll", typeof(RectTransform));

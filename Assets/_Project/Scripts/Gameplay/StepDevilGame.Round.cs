@@ -1459,6 +1459,15 @@ namespace StepDevil
                 StartDevilBob();
             if (id == ScreenId.Truth)
                 TrySpawnHappyDevilPopup();
+
+            // Entering the Level Map from ANY path (Title → Play, Leave popup → Yes,
+            // retry flows, etc.) — pull the latest unlock state from StepDevilProgress
+            // so freshly-cleared levels turn green without needing a scene reload.
+            if (id == ScreenId.LevelMap && _levelMapView != null)
+            {
+                _levelMapView.RefreshUnlocks();
+                RefreshLevelMapHeader();
+            }
         }
 
         /// <summary>Activates a screen with fade-in transition.</summary>
