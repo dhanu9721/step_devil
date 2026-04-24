@@ -82,10 +82,15 @@ namespace StepDevil
             if (r.GameScreen != null)
             {
                 var g = r.GameScreen.transform;
-                // Optional scene-authored back button. Accepts names containing any of:
-                // Back, BackBtn, Leave, "<". When found, it's wired to OpenLeavePopup.
+                // Optional scene-authored back button. Tries name substrings in order,
+                // then falls back to matching the button's label text (useful when the
+                // author named the GameObject "<" or "←" like the code-built version does).
                 r.GameBackButton = FindButtonByNameSubstring(g, "BACK")
-                                   ?? FindButtonByNameSubstring(g, "LEAVE");
+                                   ?? FindButtonByNameSubstring(g, "LEAVE")
+                                   ?? FindButtonByNameSubstring(g, "EXIT")
+                                   ?? FindButtonByNameSubstring(g, "RETURN")
+                                   ?? FindButtonByNameSubstring(g, "QUIT")
+                                   ?? FindButtonByLabelText(g, "<", "←", "BACK", "LEAVE", "EXIT");
                 r.LivesText = FindTmpInGameHudRow(g, "Lives", "LivesText");
                 r.LevelNum = FindTmp(g, "LvlNum");
                 r.CoinsText = FindTmpInGameHudRow(g, "Coins", "CoinsText");
@@ -276,6 +281,30 @@ namespace StepDevil
                     return b;
             }
 
+            return null;
+        }
+
+        /// <summary>First <see cref="Button"/> whose TextMeshProUGUI child (label) exactly or
+        /// contains one of the given strings (case-insensitive, trimmed). Useful when the
+        /// Button GameObject is unnamed / has a generic name but its label gives away intent.</summary>
+        static Button FindButtonByLabelText(Transform scope, params string[] labels)
+        {
+            if (scope == null || labels == null || labels.Length == 0)
+                return null;
+            foreach (var b in scope.GetComponentsInChildren<Button>(true))
+            {
+                var tmp = b.GetComponentInChildren<TextMeshProUGUI>(true);
+                if (tmp == null) continue;
+                var text = (tmp.text ?? "").Trim().ToUpperInvariant();
+                if (text.Length == 0) continue;
+                foreach (var l in labels)
+                {
+                    if (string.IsNullOrEmpty(l)) continue;
+                    var key = l.Trim().ToUpperInvariant();
+                    if (text == key || text.IndexOf(key, System.StringComparison.Ordinal) >= 0)
+                        return b;
+                }
+            }
             return null;
         }
 

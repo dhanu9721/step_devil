@@ -63,6 +63,10 @@ namespace StepDevil
         [Tooltip("When ON, every ShowScreen() re-runs defensive fixups: reorders Game-screen children, overwrites VLG/HLG flags, snaps Timer/Mirror/Blip TMPs to hard-coded anchors, and forces min widths on every TMP. Keep this on if your scene layout renders broken at runtime. Turn it OFF to trust your Inspector-authored positions, anchors and sizes as-is.")]
         [SerializeField] bool _overrideSceneLayoutAtRuntime = true;
 
+        [Header("Scene override slots (optional)")]
+        [Tooltip("Drag your scene-authored in-game Back button here. Used when the auto-finder can't locate it by name (e.g. you named it something unusual like '<'). Takes priority over the finder.")]
+        [SerializeField] Button _sceneGameBackButtonOverride;
+
         [SerializeField] TMP_FontAsset _tmpFont;
 
         [Header("Blip sprites (code-built UI only)")]
@@ -284,8 +288,12 @@ namespace StepDevil
                 _storeGo.SetActive(false);
             }
 
-            // Inject title extras (wallet bar + spin + rewards buttons) if not already built
-            if (_spinButton == null && _titleGo != null)
+            // Inject title extras (wallet bar + spin + rewards buttons) only if neither
+            // the code-built bar nor a scene-authored ActionBar already exists. Without
+            // this check, ANY call path that leaves _spinButton null (e.g. scene mode)
+            // would duplicate the bar every time Awake runs.
+            var sceneHasActionBar = _titleGo != null && _titleGo.transform.Find("ActionBar") != null;
+            if (_spinButton == null && _titleGo != null && !sceneHasActionBar)
                 InjectTitleExtras();
 
             // Inject daily challenge button if not already created (scene-based UI path)
@@ -614,7 +622,12 @@ namespace StepDevil
             _worldRule = r.WorldRule;
             _worldGoBtn = r.WorldGoButton;
             _gameGo = r.GameScreen;
-            _gameBackButton = r.GameBackButton;
+            // Inspector override wins — falls back to the auto-finder result, which in
+            // turn may be null if the scene button has an unusual name. Either way,
+            // WireBuiltUiButtons null-guards before wiring.
+            _gameBackButton = _sceneGameBackButtonOverride != null
+                ? _sceneGameBackButtonOverride
+                : r.GameBackButton;
             _livesText = r.LivesText;
             _levelNum = r.LevelNum;
             _coinsText = r.CoinsText;
