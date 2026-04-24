@@ -60,6 +60,24 @@ namespace StepDevil
                 r.TitleDiamondsText = FindTmpFirst(titleTf,
                     "TitleDiamonds", "TitleDiamondsText", "DiamondsLabel",
                     "TitleDiamondsLbl", "TitleGems", "TitleGemsLbl");
+
+                // Optional action-bar buttons. Name substring matches first, then label text.
+                r.DailyChallengeButton = FindButtonByNameSubstring(titleTf, "DAILYCHALLENGE")
+                                         ?? FindButtonByNameSubstring(titleTf, "CHALLENGE")
+                                         ?? FindButtonByLabelText(titleTf, "DAILY CHALLENGE", "CHALLENGE");
+                r.DailyRewardsButton = FindButtonByNameSubstring(titleTf, "DAILYREWARDS")
+                                       ?? FindButtonByNameSubstring(titleTf, "REWARDS")
+                                       ?? FindButtonByLabelText(titleTf, "DAILY REWARDS", "REWARDS");
+                r.SpinButton = FindButtonByNameSubstring(titleTf, "SPIN")
+                               ?? FindButtonByLabelText(titleTf, "SPIN");
+                r.StoreButton = FindButtonByNameSubstring(titleTf, "STORE")
+                                ?? FindButtonByLabelText(titleTf, "STORE", "SHOP");
+                r.SettingsButton = FindButtonByNameSubstring(titleTf, "SETTING")
+                                   ?? FindButtonByLabelText(titleTf, "SETTINGS", "SETTING");
+                r.NoAdsButton = FindButtonByNameSubstring(titleTf, "NOADS")
+                                ?? FindButtonByNameSubstring(titleTf, "NO_ADS")
+                                ?? FindButtonByNameSubstring(titleTf, "NOAD")
+                                ?? FindButtonByLabelText(titleTf, "NO ADS", "NOADS");
             }
 
             r.LevelMapScreen = FindScreenRoot(root, "LevelMap")?.gameObject;

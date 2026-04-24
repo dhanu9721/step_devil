@@ -23,6 +23,15 @@ namespace StepDevil
         /// <summary>Optional. Title-screen diamond label — if set, the code-built bottom action bar skips its own wallet row.</summary>
         public TextMeshProUGUI TitleDiamondsText;
 
+        // Optional action bar buttons. Any that are set here are wired automatically in
+        // WireBuiltUiButtons. When bound, the code-built injector skips its duplicate.
+        public Button DailyChallengeButton;
+        public Button DailyRewardsButton;
+        public Button SpinButton;
+        public Button StoreButton;
+        public Button SettingsButton;
+        public Button NoAdsButton;
+
         public GameObject LevelMapScreen;
         public StepDevilLevelMapView LevelMapView;
 

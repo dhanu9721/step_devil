@@ -66,6 +66,18 @@ namespace StepDevil
         [Header("Scene override slots (optional)")]
         [Tooltip("Drag your scene-authored in-game Back button here. Used when the auto-finder can't locate it by name (e.g. you named it something unusual like '<'). Takes priority over the finder.")]
         [SerializeField] Button _sceneGameBackButtonOverride;
+        [Tooltip("Drag your scene-authored Daily Challenge button (on the Title / ActionBar). Leave empty to let the finder locate it by name/label.")]
+        [SerializeField] Button _sceneDailyChallengeButtonOverride;
+        [Tooltip("Drag your scene-authored Daily Rewards button. Leave empty to let the finder locate it by name/label.")]
+        [SerializeField] Button _sceneDailyRewardsButtonOverride;
+        [Tooltip("Drag your scene-authored Spin Wheel button. Leave empty to let the finder locate it by name/label.")]
+        [SerializeField] Button _sceneSpinButtonOverride;
+        [Tooltip("Drag your scene-authored Store button. Leave empty to let the finder locate it by name/label.")]
+        [SerializeField] Button _sceneStoreButtonOverride;
+        [Tooltip("Drag your scene-authored Settings button. Leave empty to let the finder locate it by name/label.")]
+        [SerializeField] Button _sceneSettingsButtonOverride;
+        [Tooltip("Drag your scene-authored No Ads button. Leave empty to let the finder locate it by name/label.")]
+        [SerializeField] Button _sceneNoAdsButtonOverride;
 
         [SerializeField] TMP_FontAsset _tmpFont;
 
@@ -181,6 +193,9 @@ namespace StepDevil
         TextMeshProUGUI _titleDiamondsText;
         Button _spinButton;
         Button _dailyRewardsButton;
+        Button _storeButton;
+        Button _settingsButton;
+        Button _noAdsButton;
 
         // Spin Wheel screen
         GameObject _spinWheelGo;
@@ -303,6 +318,11 @@ namespace StepDevil
             WireBuiltUiButtons();
             RefreshTitleWalletBar();
             RefreshDailyRewardsButton();
+            // Sync scene-authored action buttons to current game state. Code-built
+            // buttons already get the right tint at creation, but scene-bound ones
+            // inherit whatever colour the author set.
+            RefreshDailyButton();
+            RefreshSpinButton();
             ShowScreen(ScreenId.Title);
         }
 
@@ -531,6 +551,25 @@ namespace StepDevil
                 _dailyRewardsButton.onClick.AddListener(OpenDailyRewards);
             }
 
+            // Scene-authored ActionBar buttons. The code-built injector wires its own copies
+            // inline via CreateActionTile, so these listener hooks only fire for
+            // scene/override-bound buttons and are idempotent either way.
+            if (_storeButton != null)
+            {
+                _storeButton.onClick.RemoveAllListeners();
+                _storeButton.onClick.AddListener(OpenStore);
+            }
+            if (_settingsButton != null)
+            {
+                _settingsButton.onClick.RemoveAllListeners();
+                _settingsButton.onClick.AddListener(OpenSettingsPopup);
+            }
+            if (_noAdsButton != null)
+            {
+                _noAdsButton.onClick.RemoveAllListeners();
+                _noAdsButton.onClick.AddListener(OpenNoAdsPopup);
+            }
+
             if (_spinActionButton != null)
             {
                 _spinActionButton.onClick.RemoveAllListeners();
@@ -613,6 +652,16 @@ namespace StepDevil
             // below skips its duplicate wallet row to avoid layout reflow.
             if (r.TitleCoinsText != null)    _titleCoinsText = r.TitleCoinsText;
             if (r.TitleDiamondsText != null) _titleDiamondsText = r.TitleDiamondsText;
+
+            // ActionBar buttons: Inspector override wins, else the auto-finder result.
+            // Any button that binds here suppresses its matching code-built/injected version.
+            _dailyChallengeButton = _sceneDailyChallengeButtonOverride ?? r.DailyChallengeButton;
+            _dailyRewardsButton   = _sceneDailyRewardsButtonOverride   ?? r.DailyRewardsButton;
+            _spinButton           = _sceneSpinButtonOverride           ?? r.SpinButton;
+            _storeButton          = _sceneStoreButtonOverride          ?? r.StoreButton;
+            _settingsButton       = _sceneSettingsButtonOverride       ?? r.SettingsButton;
+            _noAdsButton          = _sceneNoAdsButtonOverride          ?? r.NoAdsButton;
+
             _levelMapGo = r.LevelMapScreen;
             _levelMapView = r.LevelMapView;
             _worldGo = r.WorldScreen;
