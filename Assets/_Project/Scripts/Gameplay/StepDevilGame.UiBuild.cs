@@ -387,12 +387,7 @@ namespace StepDevil
                 RefreshTitleWalletBar();
                 RefreshDailyButton();
                 RefreshSpinButton();
-                if (_dailyRewardsButton != null)
-                {
-                    var img = _dailyRewardsButton.GetComponent<Image>();
-                    if (img != null) img.color = new Color32(100, 60, 200, 255);
-                    _dailyRewardsButton.interactable = true;
-                }
+                RefreshDailyRewardsButton();
             });
 
             CreateActionTile(contentRt, "noads",    "NO ADS",   new Color32(40, 80, 160, 255), OpenNoAdsPopup);

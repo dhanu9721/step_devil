@@ -14,12 +14,16 @@ namespace StepDevil
                 _blipVisuals.ShowIdle();
             else if (_blipText != null)
                 _blipText.text = ":|";
-            SDTween.Kill(_blipRt);
-            _blipRt.anchoredPosition = Vector2.zero;
-            _blipRt.localScale = Vector3.one;
-            _blipRt.localEulerAngles = Vector3.zero;
-            var cg = _blipRt.GetComponent<CanvasGroup>();
-            if (cg != null) cg.alpha = 1f;
+
+            if (_blipRt != null)
+            {
+                SDTween.Kill(_blipRt);
+                _blipRt.anchoredPosition = Vector2.zero;
+                _blipRt.localScale = Vector3.one;
+                _blipRt.localEulerAngles = Vector3.zero;
+                var cg = _blipRt.GetComponent<CanvasGroup>();
+                if (cg != null) cg.alpha = 1f;
+            }
 
             if (_devilAnim != null)
             {
@@ -41,6 +45,9 @@ namespace StepDevil
                 _devilAnim.StopAndReset();
                 _devilAnim.gameObject.SetActive(false);
             }
+
+            if (_blipRt == null)
+                yield break;
 
             var cg = _blipRt.GetComponent<CanvasGroup>();
             if (cg != null)
@@ -133,6 +140,7 @@ namespace StepDevil
                 _devilTipText.transform.parent.gameObject.SetActive(hasTip);
             }
 
+            var mirrorWasVisible = _mirrorBanner.gameObject.activeSelf;
             _mirrorBanner.gameObject.SetActive(_mirror);
             if (_mirror)
             {
@@ -140,6 +148,19 @@ namespace StepDevil
                 var c = _mirrorBanner.color;
                 c.a = 1f;
                 _mirrorBanner.color = c;
+
+                // Looping blink (existing animation lib call that was previously unused) —
+                // keeps the MIRROR warning constantly eye-catching while active.
+                SDAnimationLibrary.MirrorBlink(_mirrorBanner);
+
+                // Pop-in scale on first activation so the player can't miss the rule change.
+                if (!mirrorWasVisible)
+                {
+                    var bannerRt = _mirrorBanner.rectTransform;
+                    SDTween.Kill(bannerRt);
+                    bannerRt.localScale = Vector3.one * 0.6f;
+                    SDTween.Scale(bannerRt, Vector3.one, 0.35f).SetEase(SDEase.OutBack);
+                }
             }
             else
             {
@@ -254,6 +275,19 @@ namespace StepDevil
                 return;
             _locked = true;
 
+            // Press-in feedback: snap the tapped stone to 92% so StoneSelect (fired later
+            // in ChoiceRoutine) tweens from there up to 106% — a natural dip-pop. Without
+            // this the stone jumps straight to 106% and the player never "feels" their tap land.
+            if (visualIndex >= 0 && visualIndex < _stonePool.Count)
+            {
+                var pressRt = _stonePool[visualIndex].Root?.transform as RectTransform;
+                if (pressRt != null)
+                {
+                    SDTween.Kill(pressRt);
+                    pressRt.localScale = Vector3.one * 0.92f;
+                }
+            }
+
             var lv = StepDevilDatabase.GetLevel(_levelIndex);
             var fork = lv.Forks[_forkIndex];
             var actual = visualIndex;
@@ -270,7 +304,7 @@ namespace StepDevil
                 }
             }
 
-            StartCoroutine(ChoiceRoutine(actual, visualIndex, fork));
+            _roundCo = StartCoroutine(ChoiceRoutine(actual, visualIndex, fork));
         }
 
         IEnumerator ChoiceRoutine(int actual, int visual, StepDevilStoneDef[] fork)
@@ -389,9 +423,12 @@ namespace StepDevil
                         _blipVisuals.ShowWrong();
                     else if (_blipText != null)
                         _blipText.text = ":(";
-                    var blipCg = _blipRt.GetComponent<CanvasGroup>();
-                    if (blipCg == null) blipCg = _blipRt.gameObject.AddComponent<CanvasGroup>();
-                    SDAnimationLibrary.BlipFall(_blipRt, blipCg);
+                    if (_blipRt != null)
+                    {
+                        var blipCg = _blipRt.GetComponent<CanvasGroup>();
+                        if (blipCg == null) blipCg = _blipRt.gameObject.AddComponent<CanvasGroup>();
+                        SDAnimationLibrary.BlipFall(_blipRt, blipCg);
+                    }
 
                     // Stone shake animation (matches CSS shakeVoid)
                     SDAnimationLibrary.StoneShakeVoid(stoneRt);
@@ -409,16 +446,17 @@ namespace StepDevil
                 }
             }
 
-            // Fade non-chosen stones (smooth transition instead of instant)
+            // Fade non-chosen stones (smooth transition instead of instant).
+            // Destroyed roots are treated as already-gone and skipped.
             for (var i = 0; i < _stonePool.Count; i++)
             {
-                if (i != visual)
-                {
-                    var cg = _stonePool[i].Root.GetComponent<CanvasGroup>();
-                    if (cg == null)
-                        cg = _stonePool[i].Root.AddComponent<CanvasGroup>();
-                    SDAnimationLibrary.FadeCanvasGroup(cg, 0.28f, 0.3f);
-                }
+                if (i == visual) continue;
+                var root = _stonePool[i].Root;
+                if (root == null) continue;
+                var cg = root.GetComponent<CanvasGroup>();
+                if (cg == null)
+                    cg = root.AddComponent<CanvasGroup>();
+                SDAnimationLibrary.FadeCanvasGroup(cg, 0.28f, 0.3f);
             }
 
             _history.Add(new HistoryEntry
@@ -468,11 +506,35 @@ namespace StepDevil
         {
             if (_resultIcon != null) _resultIcon.Play(); // sprite animation — assign frames in the Inspector
             _resultTitle.text = "YOU FELL!";
-            _resultSub.text =
-                "The signals were lying to you. Don't trust what looks obvious — look for signals that AGREE.";
+            _resultSub.text = BuildWhyYouFellHint();
             _resultLives.text = _lives <= 0 ? "<color=#FF4D6D>0</color>" : _lives.ToString();
             _resultRetry.gameObject.SetActive(true);
             ShowScreen(ScreenId.Result);
+        }
+
+        /// <summary>Explains which signals lied on the stone the player just picked — the
+        /// most important teaching moment in the game. Falls back to the generic copy if
+        /// history is empty (e.g. first-frame edge cases).</summary>
+        string BuildWhyYouFellHint()
+        {
+            if (_history.Count == 0)
+                return "The signals were lying to you. Look for signals that AGREE.";
+            var last = _history[_history.Count - 1];
+            if (last.Ok)
+                return "The signals were lying to you. Look for signals that AGREE.";
+
+            var lies = new System.Collections.Generic.List<string>(3);
+            if (last.ColorLie) lies.Add("COLOR");
+            if (last.LabelLie) lies.Add("LABEL");
+            if (last.IconLie)  lies.Add("ICON");
+
+            if (lies.Count == 0)
+                return "That stone was a VOID in disguise. Check every signal next time.";
+            if (lies.Count == 1)
+                return $"The <b>{lies[0]}</b> lied on that stone. Trust signals that AGREE.";
+            if (lies.Count == 2)
+                return $"<b>{lies[0]}</b> and <b>{lies[1]}</b> both lied. Trust whichever signal agreed with the majority.";
+            return "All three signals lied — nasty. Cross-check every stone from now on.";
         }
 
         void OnForkChoiceTimeExpired()
@@ -480,7 +542,7 @@ namespace StepDevil
             if (_locked)
                 return;
             _locked = true;
-            StartCoroutine(ForkTimerExpiredRoutine());
+            _roundCo = StartCoroutine(ForkTimerExpiredRoutine());
         }
 
         IEnumerator ForkTimerExpiredRoutine()
@@ -489,10 +551,13 @@ namespace StepDevil
                 _blipVisuals.ShowTimeUp();
             else if (_blipText != null)
                 _blipText.text = ":(";
-            var blipCg = _blipRt.GetComponent<CanvasGroup>();
-            if (blipCg == null)
-                blipCg = _blipRt.gameObject.AddComponent<CanvasGroup>();
-            SDAnimationLibrary.BlipFall(_blipRt, blipCg);
+            if (_blipRt != null)
+            {
+                var blipCg = _blipRt.GetComponent<CanvasGroup>();
+                if (blipCg == null)
+                    blipCg = _blipRt.gameObject.AddComponent<CanvasGroup>();
+                SDAnimationLibrary.BlipFall(_blipRt, blipCg);
+            }
             Flash(new Color(StepDevilPalette.Danger.r / 255f, StepDevilPalette.Danger.g / 255f, StepDevilPalette.Danger.b / 255f, 0.2f));
             StepDevilWallet.SpendLife();
             _lives = StepDevilWallet.TotalLives;
@@ -527,6 +592,10 @@ namespace StepDevil
             StepDevilWallet.AddCoins(5);
             _coins = StepDevilWallet.Coins;
             UpdateCoins();
+
+            // Reward feedback: floater so the +5 coin grant is felt, not just counted.
+            SpawnFloatText("+5 $", StepDevilPalette.Gold);
+
             PopulateTruthScreen();
             ShowScreen(ScreenId.Truth);
         }
@@ -550,75 +619,7 @@ namespace StepDevil
                 if (h.Stone.Type == StepDevilStoneType.Bonus)
                     bonusCoins += 10;
 
-                // --- Row container (horizontal: Step | Mid | Result) ---
-                var row = CreatePanel(_truthRowsRoot, "Row", new Color(1f, 1f, 1f, 0.04f), Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
-                var rowLe = row.gameObject.AddComponent<LayoutElement>();
-                rowLe.minHeight = 64f;
-                rowLe.preferredHeight = 72f;
-                var hlay = row.gameObject.AddComponent<HorizontalLayoutGroup>();
-                hlay.childAlignment = TextAnchor.MiddleCenter;
-                hlay.padding = new RectOffset(12, 12, 8, 8);
-                hlay.spacing = 10f;
-                hlay.childControlWidth = true;
-                hlay.childControlHeight = true;
-                hlay.childForceExpandWidth = false;
-                hlay.childForceExpandHeight = true;
-
-                // Left: Step label
-                var stepLe = CreateText(row, "Step", $"Step {i + 1}", 11, StepDevilPalette.Grey, TextAnchor.MiddleLeft, false, true, null,
-                    UiTextMode.LayoutVerticalBlock, 50f, 28f);
-                var stepLeComp = stepLe.gameObject.GetComponent<LayoutElement>();
-                if (stepLeComp == null) stepLeComp = stepLe.gameObject.AddComponent<LayoutElement>();
-                stepLeComp.preferredWidth = 50f;
-                stepLeComp.minWidth = 50f;
-
-                // Middle: type + signal chips (vertical stack)
-                var mid = CreatePanel(row, "Mid", new Color(0, 0, 0, 0), Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
-                var midLe = mid.gameObject.AddComponent<LayoutElement>();
-                midLe.flexibleWidth = 1f;
-                midLe.minWidth = 120f;
-                var midV = mid.gameObject.AddComponent<VerticalLayoutGroup>();
-                midV.spacing = 4f;
-                midV.childAlignment = TextAnchor.MiddleLeft;
-                midV.childControlWidth = true;
-                midV.childControlHeight = true;
-                midV.childForceExpandWidth = true;
-                midV.childForceExpandHeight = false;
-                var typeTxt =
-                    $"TRUE: {h.Stone.Type}";
-                CreateText(mid, "Type", typeTxt, 12, Color.white, TextAnchor.MiddleLeft, true, true, null, UiTextMode.LayoutVerticalBlock, 160f,
-                    22f);
-
-                // Signal chips row
-                var sigRow = CreatePanel(mid, "Sigs", new Color(0, 0, 0, 0), Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
-                var sigLe = sigRow.gameObject.AddComponent<LayoutElement>();
-                sigLe.preferredHeight = 20f;
-                var shr = sigRow.gameObject.AddComponent<HorizontalLayoutGroup>();
-                shr.spacing = 4f;
-                shr.childForceExpandWidth = false;
-                shr.childForceExpandHeight = false;
-                shr.childControlWidth = true;
-                shr.childControlHeight = true;
-                SigChip(sigRow, "Color", h.ColorLie);
-                SigChip(sigRow, "Label", h.LabelLie);
-                SigChip(sigRow, "Icon", h.IconLie);
-
-                // Right: OK/XX result
-                var right = CreatePanel(row, "R", new Color(0, 0, 0, 0), Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
-                var rightLe = right.gameObject.AddComponent<LayoutElement>();
-                rightLe.preferredWidth = 52f;
-                rightLe.minWidth = 52f;
-                var rv = right.gameObject.AddComponent<VerticalLayoutGroup>();
-                rv.childAlignment = TextAnchor.MiddleCenter;
-                rv.childControlWidth = true;
-                rv.childControlHeight = true;
-                rv.childForceExpandWidth = true;
-                rv.childForceExpandHeight = false;
-                rv.spacing = 2f;
-                CreateText(right, "O", h.Ok ? "OK" : "XX", 20, h.Ok ? StepDevilPalette.Safe : StepDevilPalette.Danger, TextAnchor.MiddleCenter, true, true, null,
-                    UiTextMode.LayoutVerticalBlock, 48f, 24f);
-                CreateText(right, "Ot", h.Ok ? "SAFE" : "FELL", 9, h.Ok ? StepDevilPalette.Safe : StepDevilPalette.Danger, TextAnchor.MiddleCenter,
-                    true, true, null, UiTextMode.LayoutVerticalBlock, 48f, 16f);
+                BuildTruthRow(_truthRowsRoot, i + 1, h);
             }
 
             if (_truthScroll != null && _truthScroll.content != null)
@@ -644,11 +645,16 @@ namespace StepDevil
             LayoutRebuilder.ForceRebuildLayoutImmediate(_truthRowsRoot);
 
             _truthSum.richText = true;
+            var goldHex   = ColorUtility.ToHtmlStringRGB(StepDevilPalette.Gold);
+            var dangerHex = ColorUtility.ToHtmlStringRGB(StepDevilPalette.Danger);
+            var mutedHex  = "9CA3AF";
             _truthSum.text =
-                $"<b>Level {lv.Id} — \"{lv.Name}\" Complete!</b>\n" +
-                $"<color=#{ColorUtility.ToHtmlStringRGB(StepDevilPalette.Gold)}>+{5 + bonusCoins} $</color>   " +
-                $"<color=#{ColorUtility.ToHtmlStringRGB(StepDevilPalette.Danger)}>{falls} fall{(falls != 1 ? "s" : "")}</color>   " +
-                $"<color=#888888>{liesSum} lie{(liesSum != 1 ? "s" : "")} found</color>";
+                $"<b>LEVEL {lv.Id} CLEAR</b>  <size=80%><color=#{mutedHex}>— {lv.Name}</color></size>\n" +
+                $"<size=110%><color=#{goldHex}>+{5 + bonusCoins} $</color></size> " +
+                $"<color=#{mutedHex}>·</color> " +
+                $"<color=#{dangerHex}>{falls} fall{(falls != 1 ? "s" : "")}</color> " +
+                $"<color=#{mutedHex}>·</color> " +
+                $"<color=#{mutedHex}>{liesSum} lie{(liesSum != 1 ? "s" : "")} spotted</color>";
 
             if (_truthGo != null)
                 LayoutRebuilder.ForceRebuildLayoutImmediate(_truthGo.GetComponent<RectTransform>());
@@ -659,24 +665,188 @@ namespace StepDevil
                 _truthSum.ForceMeshUpdate(true);
         }
 
+        // ── Truth screen row builder ──────────────────────────────────────
+        //
+        // Layout per step (row):
+        //
+        //   ┌─[4px accent]─┬────┬───────────────────────────────────┬──────────┐
+        //   │   bar        │ 01 │  StoneLabel  [TypeBadge]          │  [SAFE]  │
+        //   │              │    │  [COLOR OK] [LABEL LIE] [ICON OK] │          │
+        //   └──────────────┴────┴───────────────────────────────────┴──────────┘
+        //
+        void BuildTruthRow(RectTransform parent, int stepNumber, HistoryEntry h)
+        {
+            var accent = StepDevilPalette.StoneAccent(h.Stone.ColorKey);
+            // Subtle, different row tint depending on outcome so fallen rows scan quickly.
+            var rowBg = h.Ok
+                ? new Color(1f, 1f, 1f, 0.04f)
+                : new Color(1f, 0.35f, 0.4f, 0.09f);
+
+            var row = CreatePanel(parent, $"Row_{stepNumber}", rowBg,
+                Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
+            var rowLe = row.gameObject.AddComponent<LayoutElement>();
+            rowLe.minHeight = 80f;
+            rowLe.preferredHeight = 88f;
+            var hlay = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+            hlay.childAlignment = TextAnchor.MiddleLeft;
+            hlay.padding = new RectOffset(0, 12, 10, 10);
+            hlay.spacing = 10f;
+            hlay.childControlWidth = true;
+            hlay.childControlHeight = true;
+            hlay.childForceExpandWidth = false;
+            hlay.childForceExpandHeight = true;
+
+            // Left accent bar — stone's own color, full opacity. Instant visual ID.
+            var barBg = new Color(accent.r / 255f, accent.g / 255f, accent.b / 255f, 1f);
+            var bar = CreatePanel(row, "AccentBar", barBg,
+                Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
+            var barLe = bar.gameObject.AddComponent<LayoutElement>();
+            barLe.preferredWidth = 4f;
+            barLe.minWidth = 4f;
+
+            // Step number — big, bold, grey numeral.
+            var stepWrap = CreatePanel(row, "StepCol", new Color(0, 0, 0, 0),
+                Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
+            var stepWrapLe = stepWrap.gameObject.AddComponent<LayoutElement>();
+            stepWrapLe.preferredWidth = 32f;
+            stepWrapLe.minWidth = 32f;
+            var stepWrapV = stepWrap.gameObject.AddComponent<VerticalLayoutGroup>();
+            stepWrapV.childAlignment = TextAnchor.MiddleCenter;
+            stepWrapV.childControlWidth = true;
+            stepWrapV.childControlHeight = true;
+            stepWrapV.childForceExpandWidth = true;
+            stepWrapV.childForceExpandHeight = true;
+            CreateText(stepWrap, "StepNum", stepNumber.ToString("00"), 18,
+                new Color(1f, 1f, 1f, 0.5f), TextAnchor.MiddleCenter, true, false, null,
+                UiTextMode.LayoutVerticalBlock, 32f, 24f);
+
+            // Middle column: stone label + type chip on top row, signal chips below.
+            var mid = CreatePanel(row, "Mid", new Color(0, 0, 0, 0),
+                Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
+            var midLe = mid.gameObject.AddComponent<LayoutElement>();
+            midLe.flexibleWidth = 1f;
+            midLe.minWidth = 150f;
+            var midV = mid.gameObject.AddComponent<VerticalLayoutGroup>();
+            midV.spacing = 6f;
+            midV.childAlignment = TextAnchor.MiddleLeft;
+            midV.childControlWidth = true;
+            midV.childControlHeight = true;
+            midV.childForceExpandWidth = true;
+            midV.childForceExpandHeight = false;
+
+            // Top line: stone label + small type badge side-by-side.
+            var topRow = CreatePanel(mid, "Top", new Color(0, 0, 0, 0),
+                Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
+            var topLe = topRow.gameObject.AddComponent<LayoutElement>();
+            topLe.preferredHeight = 22f;
+            var topH = topRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            topH.spacing = 8f;
+            topH.childAlignment = TextAnchor.MiddleLeft;
+            topH.childControlWidth = true;
+            topH.childControlHeight = true;
+            topH.childForceExpandWidth = false;
+            topH.childForceExpandHeight = true;
+
+            var stoneLabel = CreateText(topRow, "StoneLbl", h.Stone.Label, 13,
+                (Color)accent, TextAnchor.MiddleLeft, true, false, null,
+                UiTextMode.LayoutVerticalBlock, 140f, 22f);
+            var stoneLbLe = stoneLabel.gameObject.GetComponent<LayoutElement>();
+            stoneLbLe.flexibleWidth = 1f;
+
+            BuildTypeBadge(topRow, h.Stone.Type);
+
+            // Bottom line: 3 signal chips.
+            var sigRow = CreatePanel(mid, "Sigs", new Color(0, 0, 0, 0),
+                Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
+            var sigLe = sigRow.gameObject.AddComponent<LayoutElement>();
+            sigLe.preferredHeight = 24f;
+            var shr = sigRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            shr.spacing = 6f;
+            shr.childAlignment = TextAnchor.MiddleLeft;
+            shr.childForceExpandWidth = false;
+            shr.childForceExpandHeight = false;
+            shr.childControlWidth = true;
+            shr.childControlHeight = true;
+            SigChip(sigRow, "COLOR", h.ColorLie);
+            SigChip(sigRow, "LABEL", h.LabelLie);
+            SigChip(sigRow, "ICON",  h.IconLie);
+
+            // Right column: single outcome pill.
+            var outcomeBg = h.Ok
+                ? new Color(StepDevilPalette.Safe.r / 255f,   StepDevilPalette.Safe.g / 255f,   StepDevilPalette.Safe.b / 255f,   0.22f)
+                : new Color(StepDevilPalette.Danger.r / 255f, StepDevilPalette.Danger.g / 255f, StepDevilPalette.Danger.b / 255f, 0.28f);
+            var pill = CreatePanel(row, "Outcome", outcomeBg,
+                Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
+            var pillLe = pill.gameObject.AddComponent<LayoutElement>();
+            pillLe.preferredWidth = 62f;
+            pillLe.minWidth = 62f;
+            pillLe.preferredHeight = 40f;
+            var pillV = pill.gameObject.AddComponent<VerticalLayoutGroup>();
+            pillV.childAlignment = TextAnchor.MiddleCenter;
+            pillV.childControlWidth = true;
+            pillV.childControlHeight = true;
+            pillV.childForceExpandWidth = true;
+            pillV.childForceExpandHeight = true;
+            pillV.padding = new RectOffset(4, 4, 4, 4);
+            CreateText(pill, "PillLbl", h.Ok ? "SAFE" : "FELL", 14,
+                h.Ok ? StepDevilPalette.Safe : StepDevilPalette.Danger,
+                TextAnchor.MiddleCenter, true, false, null,
+                UiTextMode.LayoutVerticalBlock, 54f, 22f);
+        }
+
+        void BuildTypeBadge(RectTransform parent, StepDevilStoneType type)
+        {
+            string label;
+            Color32 tint;
+            switch (type)
+            {
+                case StepDevilStoneType.Bonus:  label = "BONUS";  tint = StepDevilPalette.Gold;   break;
+                case StepDevilStoneType.Mirror: label = "MIRROR"; tint = StepDevilPalette.Purple; break;
+                case StepDevilStoneType.Spring: label = "SPRING"; tint = StepDevilPalette.Blue;   break;
+                case StepDevilStoneType.Void:   label = "VOID";   tint = StepDevilPalette.Danger; break;
+                default:                        label = "SAFE";   tint = StepDevilPalette.Safe;   break;
+            }
+            var bg = new Color(tint.r / 255f, tint.g / 255f, tint.b / 255f, 0.22f);
+            var badge = CreatePanel(parent, "TypeBadge", bg,
+                Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
+            var le = badge.gameObject.AddComponent<LayoutElement>();
+            le.preferredWidth = 54f;
+            le.minWidth = 46f;
+            le.preferredHeight = 20f;
+            var v = badge.gameObject.AddComponent<VerticalLayoutGroup>();
+            v.childAlignment = TextAnchor.MiddleCenter;
+            v.childControlWidth = true;
+            v.childControlHeight = true;
+            v.childForceExpandWidth = true;
+            v.childForceExpandHeight = true;
+            v.padding = new RectOffset(3, 3, 2, 2);
+            CreateText(badge, "Lbl", label, 9, (Color)tint,
+                TextAnchor.MiddleCenter, true, false, null,
+                UiTextMode.LayoutVerticalBlock, 48f, 16f);
+        }
+
         void SigChip(RectTransform parent, string name, bool lie)
         {
-            var bgColor = lie ? new Color(1f, 0.1f, 0.15f, 0.18f) : new Color(0.1f, 0.8f, 0.5f, 0.18f);
-            var go = CreatePanel(parent, "Sig", bgColor, Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
+            // Wider + larger font than before so "COLOR OK / COLOR LIE" never clip.
+            var tint = lie ? StepDevilPalette.Danger : StepDevilPalette.Safe;
+            var bgColor = new Color(tint.r / 255f, tint.g / 255f, tint.b / 255f, lie ? 0.26f : 0.18f);
+            var go = CreatePanel(parent, "Sig", bgColor,
+                Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
             var chipLe = go.gameObject.AddComponent<LayoutElement>();
-            chipLe.preferredHeight = 18f;
-            chipLe.preferredWidth = 56f;
-            chipLe.minWidth = 48f;
+            chipLe.preferredHeight = 22f;
+            chipLe.minHeight = 20f;
+            chipLe.preferredWidth = 78f;
+            chipLe.minWidth = 70f;
             var chipV = go.gameObject.AddComponent<VerticalLayoutGroup>();
             chipV.childAlignment = TextAnchor.MiddleCenter;
             chipV.childControlWidth = true;
             chipV.childControlHeight = true;
             chipV.childForceExpandWidth = true;
             chipV.childForceExpandHeight = true;
-            chipV.padding = new RectOffset(2, 2, 1, 1);
-            var t = lie ? StepDevilPalette.Danger : StepDevilPalette.Safe;
-            CreateText(go, "T", $"{name} {(lie ? "LIE" : "OK")}", 8, t, TextAnchor.MiddleCenter, true, true, null, UiTextMode.LayoutVerticalBlock, 52f,
-                16f);
+            chipV.padding = new RectOffset(4, 4, 2, 2);
+            CreateText(go, "Lbl", $"{name} {(lie ? "LIE" : "OK")}", 10, (Color)tint,
+                TextAnchor.MiddleCenter, true, false, null,
+                UiTextMode.LayoutVerticalBlock, 72f, 18f);
         }
 
         void AfterTruth()
@@ -736,6 +906,10 @@ namespace StepDevil
 
         void ShowChest()
         {
+            // Lock gameplay input while the chest screen is up so a stale Update() tick
+            // can never fire the fork timer between Game → Chest transition frames.
+            _locked = true;
+
             // Pick reward: alternate between coins and extra life based on cleared count
             var milestone = _totalLevelsCleared / 3; // 1, 2, 3, 4...
             if (milestone % 3 == 0)
@@ -1046,7 +1220,11 @@ namespace StepDevil
 
         void OnCloseSpinWheel()
         {
-            // If mid-spin animation, let it finish but we'll navigate away
+            // Kill any in-flight rotation tween so its completion callback
+            // (OnSpinAnimationComplete) can't run after the screen is gone and
+            // flip the now-invisible action button back to "CLAIM".
+            if (_spinWheelContainer != null)
+                SDTween.Kill(_spinWheelContainer);
             _spinWheelIsSpinning = false;
             _spinWheelPendingClaim = false;
             RefreshSpinButton();
@@ -1152,20 +1330,14 @@ namespace StepDevil
             _coins = StepDevilWallet.Coins;
             UpdateCoins();
             RefreshTitleWalletBar();
-
-            // Update the daily rewards tile — icon is now an Image placeholder; just grey the button
-            if (_dailyRewardsButton != null)
-            {
-                var img = _dailyRewardsButton.GetComponent<UnityEngine.UI.Image>();
-                if (img != null) img.color = (Color)StepDevilPalette.Grey;
-            }
-
+            RefreshDailyRewardsButton();
             PopulateDailyRewardsScreen();
         }
 
         void OnCloseDailyRewards()
         {
             RefreshTitleWalletBar();
+            RefreshDailyRewardsButton();
             ShowScreen(ScreenId.Title);
         }
 
@@ -1180,6 +1352,14 @@ namespace StepDevil
 
         void ShowComplete()
         {
+            // Clear round-only state so that a "Play Again" replay can never inherit
+            // mirror/fork bookkeeping from the final cleared level.
+            _mirror = false;
+            _mirrorCd = 0;
+            _forkIndex = 0;
+            _history.Clear();
+            _locked = true;
+
             _completeCoins.text = _coins.ToString();
             _completeLies.text = _totalLies.ToString();
             _completeFalls.text = _totalFalls.ToString();

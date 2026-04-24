@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -220,6 +221,10 @@ namespace StepDevil
         const string KeySoundEnabled = "sd_sound_on";
         const string KeyMusicEnabled = "sd_music_on";
 
+        // Currently running round state-machine coroutine (Choice/Reveal or ForkTimerExpired).
+        // Tracked so we can abort it cleanly when the player leaves gameplay mid-animation.
+        Coroutine _roundCo;
+
         void Awake()
         {
             if (_useHierarchyFromScene)
@@ -261,7 +266,70 @@ namespace StepDevil
 
             WireBuiltUiButtons();
             RefreshTitleWalletBar();
+            RefreshDailyRewardsButton();
             ShowScreen(ScreenId.Title);
+        }
+
+        void OnDisable()
+        {
+            // Game object is being disabled or destroyed (scene change, domain reload, app quit).
+            // Stop every coroutine owned by this MonoBehaviour and kill any tween we still
+            // hold references to so callbacks never fire on invalid targets.
+            StopAllCoroutines();
+            _roundCo = null;
+
+            if (_blipRt != null)                SDTween.Kill(_blipRt);
+            if (_mirrorBanner != null)          SDTween.Kill(_mirrorBanner);
+            if (_flashOverlay != null)          SDTween.Kill(_flashOverlay);
+            if (_spinWheelContainer != null)    SDTween.Kill(_spinWheelContainer);
+            if (_rewardCelebrationCg != null)   SDTween.Kill(_rewardCelebrationCg);
+            if (_chestEmoji != null)            SDTween.Kill(_chestEmoji.rectTransform);
+        }
+
+        /// <summary>Cleanly abort the active round state machine (choice/reveal/timer-expired) and reset gameplay locks.</summary>
+        void AbortActiveRound()
+        {
+            if (_roundCo != null)
+            {
+                StopCoroutine(_roundCo);
+                _roundCo = null;
+            }
+            if (_blipRt != null) SDTween.Kill(_blipRt);
+            _locked = false;
+        }
+
+        // App-pause handling: when the player backgrounds the app mid-fork, the fork
+        // timer must NOT keep ticking — otherwise they return to a guaranteed "Time's up!"
+        // We freeze _timerStart across the pause just like the Leave popup does.
+        bool _backgroundedDuringFork;
+
+        void OnApplicationPause(bool paused)
+        {
+            HandleAppInterruption(paused);
+        }
+
+        void OnApplicationFocus(bool hasFocus)
+        {
+            HandleAppInterruption(!hasFocus);
+        }
+
+        void HandleAppInterruption(bool interrupted)
+        {
+            if (_gameGo == null || !_gameGo.activeInHierarchy) return;
+
+            if (interrupted)
+            {
+                if (_gamePaused || _backgroundedDuringFork) return;
+                _pauseElapsed = Time.unscaledTime - _timerStart;
+                _gamePaused = true;
+                _backgroundedDuringFork = true;
+            }
+            else if (_backgroundedDuringFork)
+            {
+                _backgroundedDuringFork = false;
+                _gamePaused = false;
+                _timerStart = Time.unscaledTime - _pauseElapsed;
+            }
         }
 
         void Update()
@@ -638,6 +706,20 @@ namespace StepDevil
             _spinButton.interactable = canSpin;
         }
 
+        /// <summary>Keeps the Title-screen "REWARDS" tile in sync with
+        /// <see cref="StepDevilDailyReward.IsTodayClaimed"/>. Needed on launch, on return
+        /// from the daily-rewards screen, and after midnight rollovers — parallels
+        /// RefreshDailyButton / RefreshSpinButton.</summary>
+        void RefreshDailyRewardsButton()
+        {
+            if (_dailyRewardsButton == null) return;
+            var claimed = StepDevilDailyReward.IsTodayClaimed;
+            var img = _dailyRewardsButton.GetComponent<Image>();
+            if (img != null)
+                img.color = claimed ? (Color)StepDevilPalette.Grey : new Color32(100, 60, 200, 255);
+            _dailyRewardsButton.interactable = !claimed;
+        }
+
         void OpenSpinWheel()
         {
             _spinWheelIsSpinning = false;
@@ -795,8 +877,22 @@ namespace StepDevil
         {
             if (_leavePopupGo != null) _leavePopupGo.SetActive(false);
             _gamePaused = false;
-            _locked = false;
-            ShowScreen(ScreenId.LevelMap);
+            AbortActiveRound();
+
+            // Return to wherever the player entered gameplay from. Daily Challenge starts
+            // on the Title screen, so abandoning a daily attempt should bounce straight back
+            // there — not to the campaign Level Map the player never opened.
+            if (_isDailyChallenge)
+            {
+                _isDailyChallenge = false;
+                RefreshDailyButton();
+                RefreshTitleWalletBar();
+                ShowScreen(ScreenId.Title);
+            }
+            else
+            {
+                ShowScreen(ScreenId.LevelMap);
+            }
         }
 
         void OnLeaveNo()
@@ -928,8 +1024,10 @@ namespace StepDevil
             var lv = StepDevilDatabase.GetLevel(_levelIndex);
             if (_forkIndex < 0 || _forkIndex >= lv.ForkCount)
                 _forkIndex = 0;
+            // Daily Challenge hides the campaign level number — the level was picked
+            // for the player and its sequence number is meaningless to them here.
             if (_levelNum != null)
-                _levelNum.text = lv.Id.ToString();
+                _levelNum.text = _isDailyChallenge ? "DAILY" : lv.Id.ToString();
             var w = StepDevilDatabase.Worlds[lv.WorldIndex];
             if (_worldHint != null)
                 _worldHint.text = w.Hint;
