@@ -31,6 +31,8 @@ namespace StepDevil
         public Button StoreButton;
         public Button SettingsButton;
         public Button NoAdsButton;
+        /// <summary>Optional. Scene-authored Debug button — auto-wired to DEBUG_ResetAllProgress().</summary>
+        public Button DebugButton;
 
         public GameObject LevelMapScreen;
         public StepDevilLevelMapView LevelMapView;

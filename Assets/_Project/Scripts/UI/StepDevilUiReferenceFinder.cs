@@ -78,6 +78,8 @@ namespace StepDevil
                                 ?? FindButtonByNameSubstring(titleTf, "NO_ADS")
                                 ?? FindButtonByNameSubstring(titleTf, "NOAD")
                                 ?? FindButtonByLabelText(titleTf, "NO ADS", "NOADS");
+                r.DebugButton = FindButtonByNameSubstring(titleTf, "DEBUG")
+                                ?? FindButtonByLabelText(titleTf, "DEBUG", "RESET");
             }
 
             r.LevelMapScreen = FindScreenRoot(root, "LevelMap")?.gameObject;

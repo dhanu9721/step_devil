@@ -78,6 +78,8 @@ namespace StepDevil
         [SerializeField] Button _sceneSettingsButtonOverride;
         [Tooltip("Drag your scene-authored No Ads button. Leave empty to let the finder locate it by name/label.")]
         [SerializeField] Button _sceneNoAdsButtonOverride;
+        [Tooltip("Drag your scene-authored Debug button. When wired, it calls DEBUG_ResetAllProgress() (wipes PlayerPrefs + resets state). Leave empty to let the finder locate it by name 'Debug'/'Reset' or wire a different DEBUG_* method via OnClick yourself.")]
+        [SerializeField] Button _sceneDebugButtonOverride;
 
         [SerializeField] TMP_FontAsset _tmpFont;
 
@@ -196,6 +198,7 @@ namespace StepDevil
         Button _storeButton;
         Button _settingsButton;
         Button _noAdsButton;
+        Button _debugButton;
 
         // Spin Wheel screen
         GameObject _spinWheelGo;
@@ -571,6 +574,11 @@ namespace StepDevil
                 _noAdsButton.onClick.RemoveAllListeners();
                 _noAdsButton.onClick.AddListener(OpenNoAdsPopup);
             }
+            if (_debugButton != null)
+            {
+                _debugButton.onClick.RemoveAllListeners();
+                _debugButton.onClick.AddListener(DEBUG_ResetAllProgress);
+            }
 
             if (_spinActionButton != null)
             {
@@ -638,11 +646,15 @@ namespace StepDevil
 
         void BindFromHierarchy()
         {
+            // TryFind returns false when any required UI slot is missing, but the partial
+            // 'r' it builds still contains every slot it COULD find. Continuing on failure
+            // (with a warning instead of an error+return) means the buttons the finder DID
+            // locate + any Inspector overrides still get wired — rather than silently
+            // leaving every action button dead because one unrelated element was missing.
             if (!StepDevilUiReferenceFinder.TryFind(transform, out var r, out var bindFailure))
-            {
-                Debug.LogError("[StepDevilGame] Could not bind UI from hierarchy. " + bindFailure, this);
-                return;
-            }
+                Debug.LogWarning("[StepDevilGame] UI hierarchy is missing some elements (" +
+                                 bindFailure + "). Continuing with partial bindings — any " +
+                                 "element not found will be null; gameplay may be degraded.", this);
 
             _canvas = r.Canvas;
             _rootRt = r.Root;
@@ -663,6 +675,7 @@ namespace StepDevil
             _storeButton          = _sceneStoreButtonOverride          ?? r.StoreButton;
             _settingsButton       = _sceneSettingsButtonOverride       ?? r.SettingsButton;
             _noAdsButton          = _sceneNoAdsButtonOverride          ?? r.NoAdsButton;
+            _debugButton          = _sceneDebugButtonOverride          ?? r.DebugButton;
 
             _levelMapGo = r.LevelMapScreen;
             _levelMapView = r.LevelMapView;
