@@ -875,6 +875,7 @@ namespace StepDevil
 
         void OnLeaveYes()
         {
+            Debug.Log($"[StepDevil] OnLeaveYes fired. _isDailyChallenge={_isDailyChallenge}");
             if (_leavePopupGo != null) _leavePopupGo.SetActive(false);
             _gamePaused = false;
             AbortActiveRound();
