@@ -1092,6 +1092,17 @@ namespace StepDevil
             daysGo.transform.SetParent(panel, false);
             _dailyRewardsDaysRoot = daysGo.GetComponent<RectTransform>();
             TC(_dailyRewardsDaysRoot, 162f, 342f, 220f);
+            // Without a layout group here, BuildDayRow's two child rows both anchor at
+            // the same position and overlap. VLG stacks them vertically, driven by the
+            // 100-px LayoutElement.preferredHeight set on each row.
+            var daysV = daysGo.AddComponent<VerticalLayoutGroup>();
+            daysV.spacing = 12f;
+            daysV.childAlignment = TextAnchor.UpperCenter;
+            daysV.childForceExpandWidth = true;
+            daysV.childForceExpandHeight = false;
+            daysV.childControlWidth = true;
+            daysV.childControlHeight = false;
+            daysV.padding = new RectOffset(0, 0, 4, 4);
 
             var drClose = CreateButton(panel, "CLOSE", StepDevilPalette.Grey, OnCloseDailyRewards);
             var drCloseLbl = drClose.GetComponentInChildren<TextMeshProUGUI>();

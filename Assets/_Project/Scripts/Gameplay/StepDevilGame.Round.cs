@@ -665,133 +665,148 @@ namespace StepDevil
                 _truthSum.ForceMeshUpdate(true);
         }
 
-        // ── Truth screen row builder ──────────────────────────────────────
+        // ── Truth screen CARD builder ─────────────────────────────────────
         //
-        // Layout per step (row):
+        //  One discrete card per step. Vertical stack inside each card:
         //
-        //   ┌─[4px accent]─┬────┬───────────────────────────────────┬──────────┐
-        //   │   bar        │ 01 │  StoneLabel  [TypeBadge]          │  [SAFE]  │
-        //   │              │    │  [COLOR OK] [LABEL LIE] [ICON OK] │          │
-        //   └──────────────┴────┴───────────────────────────────────┴──────────┘
+        //   ┌─[top accent strip]─────────────────────────────────┐
+        //   │  STEP 01                                  [ SAFE ] │  ← header
+        //   │                                                    │
+        //   │  StoneLabel                        [ BONUS ]       │  ← stone id
+        //   │                                                    │
+        //   │  ┌────────┐  ┌────────┐  ┌────────┐               │
+        //   │  │ COLOR  │  │ LABEL  │  │  ICON  │               │  ← signal
+        //   │  │ TRUTH  │  │  LIE   │  │ TRUTH  │               │    boxes
+        //   │  └────────┘  └────────┘  └────────┘               │
+        //   └────────────────────────────────────────────────────┘
         //
         void BuildTruthRow(RectTransform parent, int stepNumber, HistoryEntry h)
         {
             var accent = StepDevilPalette.StoneAccent(h.Stone.ColorKey);
-            // Subtle, different row tint depending on outcome so fallen rows scan quickly.
-            var rowBg = h.Ok
-                ? new Color(1f, 1f, 1f, 0.04f)
-                : new Color(1f, 0.35f, 0.4f, 0.09f);
+            var cardBg = h.Ok
+                ? new Color(1f, 1f, 1f, 0.05f)
+                : new Color(1f, 0.35f, 0.4f, 0.08f);
 
-            var row = CreatePanel(parent, $"Row_{stepNumber}", rowBg,
+            // Card container (vertical layout inside).
+            var card = CreatePanel(parent, $"Card_{stepNumber}", cardBg,
                 Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
-            var rowLe = row.gameObject.AddComponent<LayoutElement>();
-            rowLe.minHeight = 80f;
-            rowLe.preferredHeight = 88f;
-            var hlay = row.gameObject.AddComponent<HorizontalLayoutGroup>();
-            hlay.childAlignment = TextAnchor.MiddleLeft;
-            hlay.padding = new RectOffset(0, 12, 10, 10);
-            hlay.spacing = 10f;
-            hlay.childControlWidth = true;
-            hlay.childControlHeight = true;
-            hlay.childForceExpandWidth = false;
-            hlay.childForceExpandHeight = true;
+            var cardLe = card.gameObject.AddComponent<LayoutElement>();
+            cardLe.minHeight = 140f;
+            cardLe.preferredHeight = 148f;
 
-            // Left accent bar — stone's own color, full opacity. Instant visual ID.
-            var barBg = new Color(accent.r / 255f, accent.g / 255f, accent.b / 255f, 1f);
-            var bar = CreatePanel(row, "AccentBar", barBg,
+            var cardV = card.gameObject.AddComponent<VerticalLayoutGroup>();
+            cardV.padding = new RectOffset(14, 14, 12, 14);
+            cardV.spacing = 10f;
+            cardV.childAlignment = TextAnchor.UpperLeft;
+            cardV.childControlWidth = true;
+            cardV.childControlHeight = false;
+            cardV.childForceExpandWidth = true;
+            cardV.childForceExpandHeight = false;
+
+            // Top accent strip — stone's own colour, drawn as the card's top border.
+            var stripBg = new Color(accent.r / 255f, accent.g / 255f, accent.b / 255f, 1f);
+            var strip = new GameObject("TopStrip", typeof(RectTransform));
+            strip.transform.SetParent(card, false);
+            var stripRt = strip.GetComponent<RectTransform>();
+            stripRt.anchorMin = new Vector2(0f, 1f);
+            stripRt.anchorMax = new Vector2(1f, 1f);
+            stripRt.pivot = new Vector2(0.5f, 1f);
+            stripRt.sizeDelta = new Vector2(0f, 4f);
+            stripRt.anchoredPosition = Vector2.zero;
+            var stripImg = strip.AddComponent<Image>();
+            stripImg.color = stripBg;
+            stripImg.raycastTarget = false;
+            // Strip is absolutely positioned — hide it from the card VLG.
+            var stripIgnore = strip.AddComponent<LayoutElement>();
+            stripIgnore.ignoreLayout = true;
+
+            // ── Header row: STEP NN (left)  |  SAFE / FELL pill (right) ──
+            var header = CreatePanel(card, "Header", new Color(0, 0, 0, 0),
                 Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
-            var barLe = bar.gameObject.AddComponent<LayoutElement>();
-            barLe.preferredWidth = 4f;
-            barLe.minWidth = 4f;
+            var headerLe = header.gameObject.AddComponent<LayoutElement>();
+            headerLe.preferredHeight = 26f;
+            headerLe.minHeight = 26f;
+            var headerH = header.gameObject.AddComponent<HorizontalLayoutGroup>();
+            headerH.spacing = 8f;
+            headerH.childAlignment = TextAnchor.MiddleLeft;
+            headerH.childControlWidth = true;
+            headerH.childControlHeight = true;
+            headerH.childForceExpandWidth = false;
+            headerH.childForceExpandHeight = true;
 
-            // Step number — big, bold, grey numeral.
-            var stepWrap = CreatePanel(row, "StepCol", new Color(0, 0, 0, 0),
+            var stepLbl = CreateText(header, "StepLbl",
+                $"STEP {stepNumber:00}", 12,
+                new Color(1f, 1f, 1f, 0.6f),
+                TextAnchor.MiddleLeft, true, false, null,
+                UiTextMode.LayoutVerticalBlock, 90f, 22f);
+            var stepLbLe = stepLbl.gameObject.GetComponent<LayoutElement>();
+            stepLbLe.flexibleWidth = 1f;
+
+            BuildOutcomePill(header, h.Ok);
+
+            // ── Stone identity row: label + type badge ───────────────────
+            var idRow = CreatePanel(card, "IdRow", new Color(0, 0, 0, 0),
                 Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
-            var stepWrapLe = stepWrap.gameObject.AddComponent<LayoutElement>();
-            stepWrapLe.preferredWidth = 32f;
-            stepWrapLe.minWidth = 32f;
-            var stepWrapV = stepWrap.gameObject.AddComponent<VerticalLayoutGroup>();
-            stepWrapV.childAlignment = TextAnchor.MiddleCenter;
-            stepWrapV.childControlWidth = true;
-            stepWrapV.childControlHeight = true;
-            stepWrapV.childForceExpandWidth = true;
-            stepWrapV.childForceExpandHeight = true;
-            CreateText(stepWrap, "StepNum", stepNumber.ToString("00"), 18,
-                new Color(1f, 1f, 1f, 0.5f), TextAnchor.MiddleCenter, true, false, null,
-                UiTextMode.LayoutVerticalBlock, 32f, 24f);
+            var idLe = idRow.gameObject.AddComponent<LayoutElement>();
+            idLe.preferredHeight = 24f;
+            idLe.minHeight = 24f;
+            var idH = idRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            idH.spacing = 8f;
+            idH.childAlignment = TextAnchor.MiddleLeft;
+            idH.childControlWidth = true;
+            idH.childControlHeight = true;
+            idH.childForceExpandWidth = false;
+            idH.childForceExpandHeight = true;
 
-            // Middle column: stone label + type chip on top row, signal chips below.
-            var mid = CreatePanel(row, "Mid", new Color(0, 0, 0, 0),
-                Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
-            var midLe = mid.gameObject.AddComponent<LayoutElement>();
-            midLe.flexibleWidth = 1f;
-            midLe.minWidth = 150f;
-            var midV = mid.gameObject.AddComponent<VerticalLayoutGroup>();
-            midV.spacing = 6f;
-            midV.childAlignment = TextAnchor.MiddleLeft;
-            midV.childControlWidth = true;
-            midV.childControlHeight = true;
-            midV.childForceExpandWidth = true;
-            midV.childForceExpandHeight = false;
-
-            // Top line: stone label + small type badge side-by-side.
-            var topRow = CreatePanel(mid, "Top", new Color(0, 0, 0, 0),
-                Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
-            var topLe = topRow.gameObject.AddComponent<LayoutElement>();
-            topLe.preferredHeight = 22f;
-            var topH = topRow.gameObject.AddComponent<HorizontalLayoutGroup>();
-            topH.spacing = 8f;
-            topH.childAlignment = TextAnchor.MiddleLeft;
-            topH.childControlWidth = true;
-            topH.childControlHeight = true;
-            topH.childForceExpandWidth = false;
-            topH.childForceExpandHeight = true;
-
-            var stoneLabel = CreateText(topRow, "StoneLbl", h.Stone.Label, 13,
+            var stoneLbl = CreateText(idRow, "StoneLbl", h.Stone.Label, 15,
                 (Color)accent, TextAnchor.MiddleLeft, true, false, null,
-                UiTextMode.LayoutVerticalBlock, 140f, 22f);
-            var stoneLbLe = stoneLabel.gameObject.GetComponent<LayoutElement>();
+                UiTextMode.LayoutVerticalBlock, 140f, 24f);
+            var stoneLbLe = stoneLbl.gameObject.GetComponent<LayoutElement>();
             stoneLbLe.flexibleWidth = 1f;
 
-            BuildTypeBadge(topRow, h.Stone.Type);
+            BuildTypeBadge(idRow, h.Stone.Type);
 
-            // Bottom line: 3 signal chips.
-            var sigRow = CreatePanel(mid, "Sigs", new Color(0, 0, 0, 0),
+            // ── Signal boxes row: COLOR / LABEL / ICON ───────────────────
+            var sigRow = CreatePanel(card, "Sigs", new Color(0, 0, 0, 0),
                 Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
             var sigLe = sigRow.gameObject.AddComponent<LayoutElement>();
-            sigLe.preferredHeight = 24f;
+            sigLe.preferredHeight = 54f;
+            sigLe.minHeight = 54f;
             var shr = sigRow.gameObject.AddComponent<HorizontalLayoutGroup>();
-            shr.spacing = 6f;
-            shr.childAlignment = TextAnchor.MiddleLeft;
-            shr.childForceExpandWidth = false;
-            shr.childForceExpandHeight = false;
+            shr.spacing = 8f;
+            shr.childAlignment = TextAnchor.MiddleCenter;
+            shr.childForceExpandWidth = true;
+            shr.childForceExpandHeight = true;
             shr.childControlWidth = true;
             shr.childControlHeight = true;
-            SigChip(sigRow, "COLOR", h.ColorLie);
-            SigChip(sigRow, "LABEL", h.LabelLie);
-            SigChip(sigRow, "ICON",  h.IconLie);
 
-            // Right column: single outcome pill.
-            var outcomeBg = h.Ok
-                ? new Color(StepDevilPalette.Safe.r / 255f,   StepDevilPalette.Safe.g / 255f,   StepDevilPalette.Safe.b / 255f,   0.22f)
-                : new Color(StepDevilPalette.Danger.r / 255f, StepDevilPalette.Danger.g / 255f, StepDevilPalette.Danger.b / 255f, 0.28f);
-            var pill = CreatePanel(row, "Outcome", outcomeBg,
+            BuildSignalBox(sigRow, "COLOR", h.ColorLie);
+            BuildSignalBox(sigRow, "LABEL", h.LabelLie);
+            BuildSignalBox(sigRow, "ICON",  h.IconLie);
+        }
+
+        /// <summary>Big pill on the header: SAFE (green) or FELL (red).</summary>
+        void BuildOutcomePill(RectTransform parent, bool safe)
+        {
+            var tint = safe ? StepDevilPalette.Safe : StepDevilPalette.Danger;
+            var bg = new Color(tint.r / 255f, tint.g / 255f, tint.b / 255f, safe ? 0.22f : 0.28f);
+            var pill = CreatePanel(parent, "Outcome", bg,
                 Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
-            var pillLe = pill.gameObject.AddComponent<LayoutElement>();
-            pillLe.preferredWidth = 62f;
-            pillLe.minWidth = 62f;
-            pillLe.preferredHeight = 40f;
-            var pillV = pill.gameObject.AddComponent<VerticalLayoutGroup>();
-            pillV.childAlignment = TextAnchor.MiddleCenter;
-            pillV.childControlWidth = true;
-            pillV.childControlHeight = true;
-            pillV.childForceExpandWidth = true;
-            pillV.childForceExpandHeight = true;
-            pillV.padding = new RectOffset(4, 4, 4, 4);
-            CreateText(pill, "PillLbl", h.Ok ? "SAFE" : "FELL", 14,
-                h.Ok ? StepDevilPalette.Safe : StepDevilPalette.Danger,
+            var le = pill.gameObject.AddComponent<LayoutElement>();
+            le.preferredWidth = 70f;
+            le.minWidth = 70f;
+            le.preferredHeight = 24f;
+            le.minHeight = 24f;
+            var v = pill.gameObject.AddComponent<VerticalLayoutGroup>();
+            v.childAlignment = TextAnchor.MiddleCenter;
+            v.childControlWidth = true;
+            v.childControlHeight = true;
+            v.childForceExpandWidth = true;
+            v.childForceExpandHeight = true;
+            v.padding = new RectOffset(4, 4, 2, 2);
+            CreateText(pill, "Lbl", safe ? "SAFE" : "FELL", 13, (Color)tint,
                 TextAnchor.MiddleCenter, true, false, null,
-                UiTextMode.LayoutVerticalBlock, 54f, 22f);
+                UiTextMode.LayoutVerticalBlock, 62f, 20f);
         }
 
         void BuildTypeBadge(RectTransform parent, StepDevilStoneType type)
@@ -825,28 +840,45 @@ namespace StepDevil
                 UiTextMode.LayoutVerticalBlock, 48f, 16f);
         }
 
-        void SigChip(RectTransform parent, string name, bool lie)
+        /// <summary>A two-line box inside a Truth card: signal name on top (muted),
+        /// verdict underneath (TRUTH green / LIE red). Sized by the parent HLG.</summary>
+        void BuildSignalBox(RectTransform parent, string name, bool lie)
         {
-            // Wider + larger font than before so "COLOR OK / COLOR LIE" never clip.
             var tint = lie ? StepDevilPalette.Danger : StepDevilPalette.Safe;
-            var bgColor = new Color(tint.r / 255f, tint.g / 255f, tint.b / 255f, lie ? 0.26f : 0.18f);
-            var go = CreatePanel(parent, "Sig", bgColor,
+            var bg = new Color(tint.r / 255f, tint.g / 255f, tint.b / 255f, lie ? 0.22f : 0.15f);
+
+            var box = CreatePanel(parent, $"Sig_{name}", bg,
                 Vector2.zero, Vector2.one, Vector2.zero, Vector2.one);
-            var chipLe = go.gameObject.AddComponent<LayoutElement>();
-            chipLe.preferredHeight = 22f;
-            chipLe.minHeight = 20f;
-            chipLe.preferredWidth = 78f;
-            chipLe.minWidth = 70f;
-            var chipV = go.gameObject.AddComponent<VerticalLayoutGroup>();
-            chipV.childAlignment = TextAnchor.MiddleCenter;
-            chipV.childControlWidth = true;
-            chipV.childControlHeight = true;
-            chipV.childForceExpandWidth = true;
-            chipV.childForceExpandHeight = true;
-            chipV.padding = new RectOffset(4, 4, 2, 2);
-            CreateText(go, "Lbl", $"{name} {(lie ? "LIE" : "OK")}", 10, (Color)tint,
+            var boxLe = box.gameObject.AddComponent<LayoutElement>();
+            boxLe.preferredHeight = 50f;
+            boxLe.minHeight = 48f;
+            boxLe.preferredWidth = 92f;
+            boxLe.minWidth = 72f;
+            boxLe.flexibleWidth = 1f;
+
+            // Outline so each box reads as a distinct chip, not a flat bar.
+            var outline = box.gameObject.AddComponent<Outline>();
+            outline.effectColor = new Color(tint.r / 255f, tint.g / 255f, tint.b / 255f, 0.55f);
+            outline.effectDistance = new Vector2(1f, -1f);
+
+            var v = box.gameObject.AddComponent<VerticalLayoutGroup>();
+            v.childAlignment = TextAnchor.MiddleCenter;
+            v.spacing = 2f;
+            v.childControlWidth = true;
+            v.childControlHeight = true;
+            v.childForceExpandWidth = true;
+            v.childForceExpandHeight = false;
+            v.padding = new RectOffset(4, 4, 4, 4);
+
+            // Top row: signal name, muted.
+            CreateText(box, "Name", name, 9,
+                new Color(1f, 1f, 1f, 0.55f), TextAnchor.MiddleCenter, true, false, null,
+                UiTextMode.LayoutVerticalBlock, 70f, 14f);
+
+            // Bottom row: big verdict label.
+            CreateText(box, "Verdict", lie ? "LIE" : "TRUTH", 14, (Color)tint,
                 TextAnchor.MiddleCenter, true, false, null,
-                UiTextMode.LayoutVerticalBlock, 72f, 18f);
+                UiTextMode.LayoutVerticalBlock, 70f, 22f);
         }
 
         void AfterTruth()
@@ -1251,14 +1283,17 @@ namespace StepDevil
             var rowGo = new GameObject($"Row{from}", typeof(RectTransform));
             rowGo.transform.SetParent(parent, false);
             var rowRt = rowGo.GetComponent<RectTransform>();
-            rowRt.anchorMin = rowRt.anchorMax = new Vector2(0.5f, 0f);
-            rowRt.sizeDelta = new Vector2(342f, 100f);
+            // Parent now owns a VerticalLayoutGroup that drives width + position, so
+            // don't fight it with a hard anchor/sizeDelta. The LayoutElement below
+            // gives VLG the height it needs.
             var hlay = rowGo.AddComponent<HorizontalLayoutGroup>();
             hlay.childAlignment = TextAnchor.MiddleCenter;
             hlay.spacing = 7f;
             hlay.childForceExpandWidth = false;
             hlay.childForceExpandHeight = true;
-            rowGo.AddComponent<LayoutElement>().preferredHeight = 100f;
+            var rowLe = rowGo.AddComponent<LayoutElement>();
+            rowLe.preferredHeight = 100f;
+            rowLe.minHeight = 100f;
 
             for (int i = from; i < to; i++)
                 BuildDayCard(rowRt, i);
