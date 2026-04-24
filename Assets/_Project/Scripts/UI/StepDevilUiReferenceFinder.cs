@@ -51,6 +51,15 @@ namespace StepDevil
                 var devilEmoji = FindDeep(titleTf, "devilEmoji");
                 r.TitleDevilAnim = devilEmoji != null ? devilEmoji.GetComponent<SDSpriteAnimator>() : null;
                 r.TitlePlayButton = FindButtonByNameSubstring(titleTf, "PLAY");
+
+                // Optional scene-authored wallet: look for a TMP named any of these under Title.
+                // When found, the injected bottom action bar keeps its row EMPTY so the
+                // scene version isn't duplicated (which was reflowing user-authored layout).
+                r.TitleCoinsText = FindTmpFirst(titleTf,
+                    "TitleCoins", "TitleCoinsText", "CoinsLabel", "TitleCoinsLbl");
+                r.TitleDiamondsText = FindTmpFirst(titleTf,
+                    "TitleDiamonds", "TitleDiamondsText", "DiamondsLabel",
+                    "TitleDiamondsLbl", "TitleGems", "TitleGemsLbl");
             }
 
             r.LevelMapScreen = FindScreenRoot(root, "LevelMap")?.gameObject;
@@ -73,6 +82,10 @@ namespace StepDevil
             if (r.GameScreen != null)
             {
                 var g = r.GameScreen.transform;
+                // Optional scene-authored back button. Accepts names containing any of:
+                // Back, BackBtn, Leave, "<". When found, it's wired to OpenLeavePopup.
+                r.GameBackButton = FindButtonByNameSubstring(g, "BACK")
+                                   ?? FindButtonByNameSubstring(g, "LEAVE");
                 r.LivesText = FindTmpInGameHudRow(g, "Lives", "LivesText");
                 r.LevelNum = FindTmp(g, "LvlNum");
                 r.CoinsText = FindTmpInGameHudRow(g, "Coins", "CoinsText");

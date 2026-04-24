@@ -329,32 +329,32 @@ namespace StepDevil
             FWB(barRt, 0f, barH);
             barGo.AddComponent<Image>().color = new Color32(10, 8, 22, 230);
 
-            // Wallet row (coins + diamonds) — absolute top of bar, centered.
-            //
-            // Layout: WalletRow (HLG, center-aligned) ──┬── Coins pill  (HLG: icon + text)
-            //                                           └── Diamonds pill (HLG: icon + text)
-            //
-            // Each pill auto-sizes via a ContentSizeFitter so the icon always sits
-            // right next to its number, and the two pills sit symmetrically around
-            // the centre with a fixed gap between them.
-            var walletGo = new GameObject("WalletRow", typeof(RectTransform));
-            walletGo.transform.SetParent(barGo.transform, false);
-            var walletRt = walletGo.GetComponent<RectTransform>();
-            TC(walletRt, 8f, 280f, 26f);
-            var walletH = walletGo.AddComponent<HorizontalLayoutGroup>();
-            walletH.childAlignment      = TextAnchor.MiddleCenter;
-            walletH.spacing             = 36f;   // equal gap between the two pills
-            walletH.childForceExpandWidth  = false;
-            walletH.childForceExpandHeight = false;
-            walletH.childControlWidth      = true;
-            walletH.childControlHeight     = true;
+            // Wallet row (coins + diamonds) — only built when the scene hasn't already
+            // supplied its own wallet labels via StepDevilUiReferences.TitleCoinsText /
+            // TitleDiamondsText. Adding a duplicate wallet would reflow any scene VLG
+            // on the Title root and visually displace the user's existing layout.
+            var sceneHasWallet = _titleCoinsText != null && _titleDiamondsText != null;
+            if (!sceneHasWallet)
+            {
+                var walletGo = new GameObject("WalletRow", typeof(RectTransform));
+                walletGo.transform.SetParent(barGo.transform, false);
+                var walletRt = walletGo.GetComponent<RectTransform>();
+                TC(walletRt, 8f, 280f, 26f);
+                var walletH = walletGo.AddComponent<HorizontalLayoutGroup>();
+                walletH.childAlignment      = TextAnchor.MiddleCenter;
+                walletH.spacing             = 36f;   // equal gap between the two pills
+                walletH.childForceExpandWidth  = false;
+                walletH.childForceExpandHeight = false;
+                walletH.childControlWidth      = true;
+                walletH.childControlHeight     = true;
 
-            BuildWalletPill(walletRt, "Coins",
-                StepDevilPalette.Gold, out _titleCoinsText,
-                () => StepDevilWallet.Coins.ToString());
-            BuildWalletPill(walletRt, "Diamonds",
-                new Color32(100, 220, 255, 255), out _titleDiamondsText,
-                () => StepDevilWallet.Diamonds.ToString());
+                BuildWalletPill(walletRt, "Coins",
+                    StepDevilPalette.Gold, out _titleCoinsText,
+                    () => StepDevilWallet.Coins.ToString());
+                BuildWalletPill(walletRt, "Diamonds",
+                    new Color32(100, 220, 255, 255), out _titleDiamondsText,
+                    () => StepDevilWallet.Diamonds.ToString());
+            }
 
             // Horizontal scroll strip
             var scrollGo = new GameObject("ActionScroll", typeof(RectTransform));

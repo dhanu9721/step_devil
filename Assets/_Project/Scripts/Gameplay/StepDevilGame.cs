@@ -90,6 +90,7 @@ namespace StepDevil
         GameObject _completeGo;
 
         Button _titlePlayButton;
+        Button _gameBackButton;
         Button _dailyChallengeButton;
         Image _dailyChallengeIconImg;
         SDSpriteAnimator _titleDevilAnim;
@@ -472,6 +473,14 @@ namespace StepDevil
                 _titlePlayButton.onClick.AddListener(OpenLevelMap);
             }
 
+            // Scene-authored Game back button — only reachable through this binding,
+            // since the code-built path wires its own back button inline in BuildGameScreen.
+            if (_gameBackButton != null)
+            {
+                _gameBackButton.onClick.RemoveAllListeners();
+                _gameBackButton.onClick.AddListener(OnBackFromGame);
+            }
+
             if (_dailyChallengeButton != null)
             {
                 _dailyChallengeButton.onClick.RemoveAllListeners();
@@ -568,6 +577,10 @@ namespace StepDevil
             _titleGo = r.TitleScreen;
             _titleDevilAnim = r.TitleDevilAnim;
             _titlePlayButton = r.TitlePlayButton;
+            // Optional scene-authored Title wallet. If bound here, InjectTitleExtras
+            // below skips its duplicate wallet row to avoid layout reflow.
+            if (r.TitleCoinsText != null)    _titleCoinsText = r.TitleCoinsText;
+            if (r.TitleDiamondsText != null) _titleDiamondsText = r.TitleDiamondsText;
             _levelMapGo = r.LevelMapScreen;
             _levelMapView = r.LevelMapView;
             _worldGo = r.WorldScreen;
@@ -577,6 +590,7 @@ namespace StepDevil
             _worldRule = r.WorldRule;
             _worldGoBtn = r.WorldGoButton;
             _gameGo = r.GameScreen;
+            _gameBackButton = r.GameBackButton;
             _livesText = r.LivesText;
             _levelNum = r.LevelNum;
             _coinsText = r.CoinsText;

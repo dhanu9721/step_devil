@@ -18,6 +18,11 @@ namespace StepDevil
         public SDSpriteAnimator TitleDevilAnim;
         public Button TitlePlayButton;
 
+        /// <summary>Optional. Title-screen coin label — if set, the code-built bottom action bar skips its own wallet row.</summary>
+        public TextMeshProUGUI TitleCoinsText;
+        /// <summary>Optional. Title-screen diamond label — if set, the code-built bottom action bar skips its own wallet row.</summary>
+        public TextMeshProUGUI TitleDiamondsText;
+
         public GameObject LevelMapScreen;
         public StepDevilLevelMapView LevelMapView;
 
@@ -29,6 +34,8 @@ namespace StepDevil
         public Button WorldGoButton;
 
         public GameObject GameScreen;
+        /// <summary>Optional. In-game Back button. If set, it's wired to open the Leave popup.</summary>
+        public Button GameBackButton;
         public TextMeshProUGUI LivesText;
         public TextMeshProUGUI LevelNum;
         public TextMeshProUGUI CoinsText;
