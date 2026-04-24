@@ -61,13 +61,17 @@ namespace StepDevil
                     "TitleDiamonds", "TitleDiamondsText", "DiamondsLabel",
                     "TitleDiamondsLbl", "TitleGems", "TitleGemsLbl");
 
-                // Optional action-bar buttons. Name substring matches first, then label text.
-                r.DailyChallengeButton = FindButtonByNameSubstring(titleTf, "DAILYCHALLENGE")
-                                         ?? FindButtonByNameSubstring(titleTf, "CHALLENGE")
-                                         ?? FindButtonByLabelText(titleTf, "DAILY CHALLENGE", "CHALLENGE");
+                // Optional action-bar buttons. Find Rewards FIRST so the generic "DAILY"
+                // fallback for Challenge can't accidentally snap to a Rewards button.
                 r.DailyRewardsButton = FindButtonByNameSubstring(titleTf, "DAILYREWARDS")
                                        ?? FindButtonByNameSubstring(titleTf, "REWARDS")
                                        ?? FindButtonByLabelText(titleTf, "DAILY REWARDS", "REWARDS");
+                r.DailyChallengeButton = FindButtonByNameSubstring(titleTf, "DAILYCHALLENGE")
+                                         ?? FindButtonByNameSubstring(titleTf, "CHALLENGE")
+                                         ?? FindButtonByNameSubstring(titleTf, "DAILY")
+                                         ?? FindButtonByLabelText(titleTf, "DAILY CHALLENGE", "CHALLENGE")
+                                         ?? FindButtonByLabelTextExcluding(titleTf, r.DailyRewardsButton,
+                                             "DAILY");
                 r.SpinButton = FindButtonByNameSubstring(titleTf, "SPIN")
                                ?? FindButtonByLabelText(titleTf, "SPIN");
                 r.StoreButton = FindButtonByNameSubstring(titleTf, "STORE")
@@ -308,11 +312,18 @@ namespace StepDevil
         /// contains one of the given strings (case-insensitive, trimmed). Useful when the
         /// Button GameObject is unnamed / has a generic name but its label gives away intent.</summary>
         static Button FindButtonByLabelText(Transform scope, params string[] labels)
+            => FindButtonByLabelTextExcluding(scope, null, labels);
+
+        /// <summary>Same as <see cref="FindButtonByLabelText"/> but skips <paramref name="exclude"/> —
+        /// lets a generic fallback keyword ("DAILY") reach the Challenge button without
+        /// accidentally binding to the Rewards button that was already matched.</summary>
+        static Button FindButtonByLabelTextExcluding(Transform scope, Button exclude, params string[] labels)
         {
             if (scope == null || labels == null || labels.Length == 0)
                 return null;
             foreach (var b in scope.GetComponentsInChildren<Button>(true))
             {
+                if (exclude != null && b == exclude) continue;
                 var tmp = b.GetComponentInChildren<TextMeshProUGUI>(true);
                 if (tmp == null) continue;
                 var text = (tmp.text ?? "").Trim().ToUpperInvariant();

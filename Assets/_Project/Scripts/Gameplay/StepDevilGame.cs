@@ -542,6 +542,17 @@ namespace StepDevil
             {
                 _dailyChallengeButton.onClick.RemoveAllListeners();
                 _dailyChallengeButton.onClick.AddListener(OnDailyChallengePressed);
+                Debug.Log("[StepDevil] DailyChallenge button WIRED to: " +
+                          _dailyChallengeButton.name + "  (interactable=" +
+                          _dailyChallengeButton.interactable + ", done today=" +
+                          StepDevilDailyChallenge.IsCompletedToday() + ")", _dailyChallengeButton);
+            }
+            else
+            {
+                Debug.LogWarning("[StepDevil] DailyChallenge button is NULL. Finder couldn't " +
+                                 "match by name ('DAILYCHALLENGE','CHALLENGE','DAILY') or label " +
+                                 "('DAILY CHALLENGE','CHALLENGE'). Drag your scene button into " +
+                                 "StepDevilGame's 'Scene Daily Challenge Button Override' slot.");
             }
 
             if (_spinButton != null)
@@ -765,6 +776,9 @@ namespace StepDevil
 
         void OnDailyChallengePressed()
         {
+            Debug.Log("[StepDevil] OnDailyChallengePressed fired. IsCompletedToday=" +
+                      StepDevilDailyChallenge.IsCompletedToday() +
+                      ", TotalLives=" + StepDevilWallet.TotalLives);
             if (StepDevilDailyChallenge.IsCompletedToday())
                 return; // already done today
 
