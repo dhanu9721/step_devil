@@ -311,9 +311,11 @@ namespace StepDevil
             if (_spinButton == null && _titleGo != null && !sceneHasActionBar)
                 InjectTitleExtras();
 
-            // Inject daily challenge button if not already created (scene-based UI path)
-            if (_dailyChallengeButton == null && _titleGo != null)
-                InjectDailyChallengeButton();
+            // NOTE: the legacy "InjectDailyChallengeButton" fallback used to create an
+            // extra DAILY CHALLENGE button near the Play button. It's been removed — if
+            // your scene doesn't have a Daily Challenge entry, the recommended path is
+            // to add one in your own ActionBar (auto-found by name/label) or drag it
+            // into the "Scene Daily Challenge Button Override" slot in the Inspector.
 
             WireBuiltUiButtons();
             RefreshTitleWalletBar();
@@ -768,6 +770,58 @@ namespace StepDevil
             // Show world screen so player sees the rules for this level's world
             PopulateWorldScreen();
             ShowScreen(ScreenId.World);
+        }
+
+        // ── DEBUG HOOKS (wire scene buttons to these via Inspector OnClick) ──────
+
+        /// <summary>[DEBUG] Nukes all PlayerPrefs progress (coins, lives, unlocks, daily
+        /// streak, spin state, etc.) and resets the live run state. Refreshes every
+        /// Title-screen button tint afterwards. Safe to call from any UI event.</summary>
+        public void DEBUG_ResetAllProgress()
+        {
+            PlayerPrefs.DeleteAll();
+            PlayerPrefs.Save();
+            _levelIndex = 0;
+            _forkIndex = 0;
+            _history.Clear();
+            _mirror = false;
+            _mirrorCd = 0;
+            _totalLies = 0;
+            _totalFalls = 0;
+            _totalLevelsCleared = 0;
+            _isDailyChallenge = false;
+            _pendingReturnToTitle = false;
+            _lives = StepDevilWallet.TotalLives;
+            _coins = StepDevilWallet.Coins;
+            UpdateLives();
+            UpdateCoins();
+            RefreshTitleWalletBar();
+            RefreshDailyButton();
+            RefreshSpinButton();
+            RefreshDailyRewardsButton();
+        }
+
+        /// <summary>[DEBUG] Refills today's daily-lives bucket back to the cap. Wire this
+        /// to a scene button's OnClick if you want a quick "give me my lives back"
+        /// test hook. Safe to call from any UI event.</summary>
+        public void DEBUG_RestoreDailyLives()
+        {
+            StepDevilWallet.DEBUG_RestoreDailyLives();
+            _lives = StepDevilWallet.TotalLives;
+            UpdateLives();
+            RefreshTitleWalletBar();
+            RefreshLevelMapHeader();
+        }
+
+        /// <summary>[DEBUG] Grants a fixed amount of coins + diamonds for testing
+        /// purchase flows / chest rewards etc. Wire from a scene button.</summary>
+        public void DEBUG_GrantTestCurrency()
+        {
+            StepDevilWallet.AddCoins(500);
+            StepDevilWallet.AddDiamonds(20);
+            _coins = StepDevilWallet.Coins;
+            UpdateCoins();
+            RefreshTitleWalletBar();
         }
 
         void RefreshDailyButton()
