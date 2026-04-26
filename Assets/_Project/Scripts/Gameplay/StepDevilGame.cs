@@ -231,6 +231,10 @@ namespace StepDevil
         Button _nlpBuyCoinsBtn;
         Button _nlpBuyDiamondsBtn;
         int _pendingLevelFromMap = -1;
+        // True when the No-Lives popup was opened for a Daily Challenge attempt — controls
+        // whether buying lives auto-resumes into OnDailyChallengePressed instead of into a
+        // map-selected level.
+        bool _pendingDailyAfterPurchase;
 
         // Reward celebration overlay
         GameObject _rewardCelebrationGo;
@@ -782,6 +786,15 @@ namespace StepDevil
             if (StepDevilDailyChallenge.IsCompletedToday())
                 return; // already done today
 
+            // Gate: a daily attempt costs at least one life on a fall, so block entry
+            // when the player has zero. Open the No-Lives popup with daily intent so that
+            // buying a life auto-resumes the daily flow.
+            if (StepDevilWallet.TotalLives <= 0)
+            {
+                OpenNoLivesPopupForDaily();
+                return;
+            }
+
             _isDailyChallenge = true;
             _levelIndex = StepDevilDailyChallenge.GetTodayLevelIndex();
             _forkIndex = 0;
@@ -1111,6 +1124,15 @@ namespace StepDevil
         void OpenNoLivesPopup(int oneBasedLevel)
         {
             _pendingLevelFromMap = oneBasedLevel;
+            _pendingDailyAfterPurchase = false;
+            RefreshNoLivesPopup();
+            if (_noLivesPopupGo != null) _noLivesPopupGo.SetActive(true);
+        }
+
+        void OpenNoLivesPopupForDaily()
+        {
+            _pendingLevelFromMap = -1;
+            _pendingDailyAfterPurchase = true;
             RefreshNoLivesPopup();
             if (_noLivesPopupGo != null) _noLivesPopupGo.SetActive(true);
         }
@@ -1118,6 +1140,7 @@ namespace StepDevil
         void CloseNoLivesPopup()
         {
             _pendingLevelFromMap = -1;
+            _pendingDailyAfterPurchase = false;
             if (_noLivesPopupGo != null) _noLivesPopupGo.SetActive(false);
         }
 
@@ -1148,13 +1171,7 @@ namespace StepDevil
             if (!StepDevilWallet.BuyLifeWithCoins()) return;
             RefreshTitleWalletBar();
             RefreshNoLivesPopup();
-            // Auto-proceed: the player now has at least 1 life
-            if (StepDevilWallet.TotalLives > 0 && _pendingLevelFromMap > 0)
-            {
-                var lvl = _pendingLevelFromMap;
-                CloseNoLivesPopup();
-                OnLevelSelectedFromMap(lvl); // TotalLives > 0, so won't re-open popup
-            }
+            ResumeAfterLifePurchase();
         }
 
         void OnNoLivesBuyDiamonds()
@@ -1162,8 +1179,20 @@ namespace StepDevil
             if (!StepDevilWallet.Buy3LivesWithDiamonds()) return;
             RefreshTitleWalletBar();
             RefreshNoLivesPopup();
-            // Auto-proceed
-            if (StepDevilWallet.TotalLives > 0 && _pendingLevelFromMap > 0)
+            ResumeAfterLifePurchase();
+        }
+
+        /// <summary>After a successful life purchase, auto-resume into whichever flow
+        /// triggered the No-Lives popup — daily challenge or a map-selected level.</summary>
+        void ResumeAfterLifePurchase()
+        {
+            if (StepDevilWallet.TotalLives <= 0) return;
+            if (_pendingDailyAfterPurchase)
+            {
+                CloseNoLivesPopup(); // also clears _pendingDailyAfterPurchase
+                OnDailyChallengePressed(); // re-entry, now passes the lives gate
+            }
+            else if (_pendingLevelFromMap > 0)
             {
                 var lvl = _pendingLevelFromMap;
                 CloseNoLivesPopup();

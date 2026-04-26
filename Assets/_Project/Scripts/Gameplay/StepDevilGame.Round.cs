@@ -1383,9 +1383,16 @@ namespace StepDevil
 
         void ShowGameOver()
         {
-            var lv = StepDevilDatabase.GetLevel(_levelIndex);
-            _goLevel.text = $"You made it to Level <b>{lv.Id}</b>";
             _goLevel.richText = true;
+            // The campaign level number is meaningless to a daily-challenge player
+            // (the level is randomly picked for them). Show the mode label instead.
+            if (_isDailyChallenge)
+                _goLevel.text = "<b>DAILY CHALLENGE</b>";
+            else
+            {
+                var lv = StepDevilDatabase.GetLevel(_levelIndex);
+                _goLevel.text = $"You made it to Level <b>{lv.Id}</b>";
+            }
             _goCoins.text = $"{_coins} coins collected";
             ShowScreen(ScreenId.GameOver);
         }
