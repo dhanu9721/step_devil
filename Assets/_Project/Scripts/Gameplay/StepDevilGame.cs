@@ -107,6 +107,8 @@ namespace StepDevil
         [SerializeField] Sprite _iconSpringSprite;
         [Tooltip("Sprite for the MIRROR/loop (↻) icon. Leave null to keep the Image empty.")]
         [SerializeField] Sprite _iconMirrorSprite;
+        [Tooltip("Optional. Sprite used as the stone's background (the rectangle behind the TopBar/Icon/Label/Hint stack). Tinted by the per-stone accent colour, so a single white-ish stone art will still differentiate Safe/Void/Bonus/Spring/Mirror at runtime. Leave null to keep the original faint-coloured panel look.")]
+        [SerializeField] Sprite _stoneBgSprite;
 
         Canvas _canvas;
         RectTransform _rootRt;

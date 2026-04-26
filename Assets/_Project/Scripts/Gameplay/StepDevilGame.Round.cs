@@ -234,7 +234,19 @@ namespace StepDevil
             var accent = StepDevilPalette.StoneAccent(stone.ColorKey);
             var accentSolid = new Color(accent.r / 255f, accent.g / 255f, accent.b / 255f, 1f);
 
-            if (bg != null) bg.color = new Color(accentSolid.r, accentSolid.g, accentSolid.b, 0.08f);
+            if (bg != null)
+            {
+                if (_stoneBgSprite != null)
+                {
+                    bg.sprite = _stoneBgSprite;
+                    bg.color = accentSolid;
+                    bg.type = Image.Type.Simple;
+                }
+                else
+                {
+                    bg.color = new Color(accentSolid.r, accentSolid.g, accentSolid.b, 0.08f);
+                }
+            }
             var outline = go.GetComponent<Outline>();
             if (outline != null) outline.effectColor = new Color(accentSolid.r, accentSolid.g, accentSolid.b, 0.9f);
             if (topImg != null) topImg.color = accentSolid;
@@ -290,7 +302,16 @@ namespace StepDevil
 
             var bg = go.AddComponent<Image>();
             var accent = StepDevilPalette.StoneAccent(stone.ColorKey);
-            bg.color = new Color(accent.r / 255f, accent.g / 255f, accent.b / 255f, 0.08f);
+            if (_stoneBgSprite != null)
+            {
+                bg.sprite = _stoneBgSprite;
+                bg.color = new Color(accent.r / 255f, accent.g / 255f, accent.b / 255f, 1f);
+                bg.type = Image.Type.Simple;
+            }
+            else
+            {
+                bg.color = new Color(accent.r / 255f, accent.g / 255f, accent.b / 255f, 0.08f);
+            }
             var outline = go.AddComponent<Outline>();
             outline.effectColor = new Color(accent.r / 255f, accent.g / 255f, accent.b / 255f, 0.9f);
             outline.effectDistance = new Vector2(2f, 2f);
