@@ -1409,14 +1409,28 @@ namespace StepDevil
             if (tmp == null)
                 return;
             var rt = tmp.rectTransform;
+
+            // Only fix TMPs that are TRULY collapsed (effectively 0 width). Any TMP with
+            // even a few pixels of layout width was either authored deliberately small
+            // (e.g. wallet "42") or is being driven by a parent layout group — forcing a
+            // 300 px minWidth on those would push them outside their parent.
+            if (rt.rect.width >= 8f)
+                return;
+
+            // If the parent owns sizing (HLG / VLG / GLG), don't fight it. Walk up at
+            // most 3 levels — small wallet rows / chip rows are within that depth.
+            var t = rt.parent;
+            for (var depth = 0; depth < 3 && t != null; depth++)
+            {
+                if (t.GetComponent<UnityEngine.UI.LayoutGroup>() != null)
+                    return;
+                t = t.parent;
+            }
+
             var le = tmp.GetComponent<LayoutElement>();
             var targetW = screenMinWidth;
             if (le != null && le.preferredWidth > 1f)
                 targetW = Mathf.Min(screenMinWidth, Mathf.Max(le.preferredWidth, le.minWidth));
-
-            // One-character-per-line happens when width is basically 0. Do not upsize small chips/labels that are already >= usable width.
-            if (rt.rect.width >= Mathf.Max(24f, targetW * 0.85f))
-                return;
 
             var h = rt.sizeDelta.y > 4f ? rt.sizeDelta.y : Mathf.Max(48f, tmp.fontSize * 2f);
             var anchored = Mathf.Approximately(rt.anchorMin.x, rt.anchorMax.x) && Mathf.Approximately(rt.anchorMin.y, rt.anchorMax.y);
