@@ -279,15 +279,6 @@ namespace StepDevil
 
         StoneWidgets CreateStone(StepDevilStoneDef stone, int index)
         {
-            // One-line diagnostic so you can confirm in the Console:
-            //   • which build path is running (Prefab vs CodeBuilt)
-            //   • whether the icon-key on this stone resolves to one of your assigned Sprite slots
-            // Remove this Debug.Log once stones are showing your art correctly.
-            var resolved = GetIconSpriteForKey(stone.Icon);
-            Debug.Log($"[Stone] index={index} type={stone.Type} icon='{stone.Icon}' " +
-                      $"path={(_stonePrefab != null ? "Prefab" : "CodeBuilt")} " +
-                      $"sprite={(resolved != null ? resolved.name : "<null>")}", this);
-
             if (_stonePrefab != null)
                 return CreateStoneFromPrefab(stone, index);
 
