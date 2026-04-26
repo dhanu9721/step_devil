@@ -715,16 +715,26 @@ namespace StepDevil
             _devilAnim = r.DevilAnim;
             _mirrorBanner = r.MirrorBanner;
             // Defensive: a scene-authored Mirror banner with sizeDelta near 0 renders
-            // either nothing (size collapses) or one glyph per line. Without this
-            // size-only fix, the banner would be invisible whenever the runtime layout
-            // override is OFF, regardless of how the user set up anchors.
+            // nothing. If the banner sits inside a parent VerticalLayoutGroup / similar,
+            // sizeDelta alone is ignored — the layout group sizes children from
+            // LayoutElement.minWidth/preferredWidth. Set both so the banner shows up
+            // regardless of where it's parented or whether the layout-override flag is on.
             if (_mirrorBanner != null)
             {
+                const float BannerW = 360f;
+                const float BannerH = 28f;
                 var mbRt = _mirrorBanner.rectTransform;
-                if (mbRt.sizeDelta.x < 60f)
-                    mbRt.sizeDelta = new Vector2(Mathf.Max(mbRt.sizeDelta.x, 360f), Mathf.Max(mbRt.sizeDelta.y, 24f));
-                else if (mbRt.sizeDelta.y < 12f)
-                    mbRt.sizeDelta = new Vector2(mbRt.sizeDelta.x, 24f);
+                if (mbRt.sizeDelta.x < BannerW * 0.5f)
+                    mbRt.sizeDelta = new Vector2(BannerW, Mathf.Max(mbRt.sizeDelta.y, BannerH));
+                else if (mbRt.sizeDelta.y < BannerH * 0.5f)
+                    mbRt.sizeDelta = new Vector2(mbRt.sizeDelta.x, BannerH);
+
+                var mbLe = _mirrorBanner.GetComponent<LayoutElement>();
+                if (mbLe == null) mbLe = _mirrorBanner.gameObject.AddComponent<LayoutElement>();
+                mbLe.minWidth        = Mathf.Max(mbLe.minWidth,        BannerW);
+                mbLe.preferredWidth  = Mathf.Max(mbLe.preferredWidth,  BannerW);
+                mbLe.minHeight       = Mathf.Max(mbLe.minHeight,       BannerH);
+                mbLe.preferredHeight = Mathf.Max(mbLe.preferredHeight, BannerH);
             }
             _stonesRoot = r.StonesRoot;
             _timerLabel = r.TimerLabel;
