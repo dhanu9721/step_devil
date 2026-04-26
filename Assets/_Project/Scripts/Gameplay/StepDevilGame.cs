@@ -271,53 +271,19 @@ namespace StepDevil
             if (_titleDevilAnim == null && _titleGo != null)
                 _titleDevilAnim = FindTitleDevilEmojiTransform(_titleGo.transform)?.GetComponent<SDSpriteAnimator>();
 
-            // Build new code-only screens that are never in the scene hierarchy
-            if (_rootRt != null && _spinWheelGo == null)
-            {
-                _spinWheelGo    = BuildSpinWheelScreen(_rootRt);    _spinWheelGo.SetActive(false);
-                _dailyRewardsGo = BuildDailyRewardsScreen(_rootRt); _dailyRewardsGo.SetActive(false);
-                _noLivesGo      = BuildNoLivesScreen(_rootRt);       _noLivesGo.SetActive(false);
-            }
-
-            // Build No Lives popup if not yet created (scene-hierarchy path)
-            if (_rootRt != null && _noLivesPopupGo == null)
-            {
-                _noLivesPopupGo = BuildNoLivesPopup(_rootRt);
-                _noLivesPopupGo.SetActive(false);
-            }
-
-            // Popups / screens that BuildUi() creates in the code-built path but the
-            // scene-hierarchy path skips. Without these, Back/Store/Settings taps silently
-            // no-op because their target GameObject is null.
-            if (_rootRt != null && _settingsPopupGo == null)
-            {
-                _settingsPopupGo = BuildSettingsPopup(_rootRt);
-                _settingsPopupGo.SetActive(false);
-            }
-            if (_rootRt != null && _leavePopupGo == null)
-            {
-                _leavePopupGo = BuildLeavePopup(_rootRt);
-                _leavePopupGo.SetActive(false);
-            }
-            if (_rootRt != null && _noAdsPopupGo == null)
-            {
-                _noAdsPopupGo = BuildNoAdsPopup(_rootRt);
-                _noAdsPopupGo.SetActive(false);
-            }
-            if (_rootRt != null && _storeGo == null)
-            {
-                _storeGo = BuildStoreScreen(_rootRt);
-                _storeGo.SetActive(false);
-            }
-            // Chest screen: never bound from the scene (no ChestScreen slot in
-            // StepDevilUiReferences), so always lazy-built. Without this, chest reward
-            // claims after every 3rd cleared level would activate a null screen and
-            // leave the player stranded on a blank canvas.
-            if (_rootRt != null && _chestGo == null)
-            {
-                _chestGo = BuildChestScreen(_rootRt);
-                _chestGo.SetActive(false);
-            }
+            // Lazy-build every screen / popup that the scene-finder doesn't bind.
+            // Each helper purges any same-named scene placeholder first, so we never
+            // end up with two SpinWheel / NoLives / DailyRewards / etc. GameObjects
+            // sitting next to each other in the hierarchy at runtime.
+            EnsureLazyScreen(ref _spinWheelGo,    "SpinWheel",    BuildSpinWheelScreen);
+            EnsureLazyScreen(ref _dailyRewardsGo, "DailyRewards", BuildDailyRewardsScreen);
+            EnsureLazyScreen(ref _noLivesGo,      "NoLives",      BuildNoLivesScreen);
+            EnsureLazyScreen(ref _settingsPopupGo, "SettingsPopup", BuildSettingsPopup);
+            EnsureLazyScreen(ref _leavePopupGo,    "LeavePopup",    BuildLeavePopup);
+            EnsureLazyScreen(ref _noAdsPopupGo,    "NoAdsPopup",    BuildNoAdsPopup);
+            EnsureLazyScreen(ref _noLivesPopupGo,  "NoLivesPopup",  BuildNoLivesPopup);
+            EnsureLazyScreen(ref _storeGo,        "Store",         BuildStoreScreen);
+            EnsureLazyScreen(ref _chestGo,        "Chest",         BuildChestScreen);
 
             // Inject title extras (wallet bar + spin + rewards buttons) only if neither
             // the code-built bar nor a scene-authored ActionBar already exists. Without
@@ -342,6 +308,40 @@ namespace StepDevil
             RefreshDailyButton();
             RefreshSpinButton();
             ShowScreen(ScreenId.Title);
+        }
+
+        /// <summary>Ensures exactly one screen GameObject of the given name lives under Root.
+        /// If the field is already non-null we trust it. Otherwise any pre-existing
+        /// scene-authored placeholder with the same name (anywhere under Root) is destroyed
+        /// — those placeholders can't be wired (no scene-binding for these screens) and would
+        /// otherwise sit next to the lazy-built one as a runtime duplicate. Then the builder
+        /// runs to produce a fully-wired version.</summary>
+        void EnsureLazyScreen(ref GameObject field, string objectName, System.Func<Transform, GameObject> builder)
+        {
+            if (_rootRt == null || field != null) return;
+
+            // Sweep duplicates: any same-named GameObject under root that the code
+            // didn't itself create. Multiple in case the scene authored several copies.
+            var sweepCount = 0;
+            var transforms = _rootRt.GetComponentsInChildren<Transform>(includeInactive: true);
+            for (var i = 0; i < transforms.Length; i++)
+            {
+                var t = transforms[i];
+                if (t == _rootRt) continue;
+                if (t.name == objectName)
+                {
+                    Destroy(t.gameObject);
+                    sweepCount++;
+                }
+            }
+            if (sweepCount > 0)
+                Debug.LogWarning($"[StepDevil] Removed {sweepCount} scene-authored '{objectName}' " +
+                                 "placeholder(s) — replaced by code-built version with full wiring. " +
+                                 "If you want to keep your scene version, add scene-bindings " +
+                                 "for it; otherwise the placeholder is just a duplicate.", this);
+
+            field = builder(_rootRt);
+            field.SetActive(false);
         }
 
         void OnDisable()
