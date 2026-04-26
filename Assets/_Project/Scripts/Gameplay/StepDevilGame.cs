@@ -714,6 +714,18 @@ namespace StepDevil
             _blipText = r.BlipText;
             _devilAnim = r.DevilAnim;
             _mirrorBanner = r.MirrorBanner;
+            // Defensive: a scene-authored Mirror banner with sizeDelta near 0 renders
+            // either nothing (size collapses) or one glyph per line. Without this
+            // size-only fix, the banner would be invisible whenever the runtime layout
+            // override is OFF, regardless of how the user set up anchors.
+            if (_mirrorBanner != null)
+            {
+                var mbRt = _mirrorBanner.rectTransform;
+                if (mbRt.sizeDelta.x < 60f)
+                    mbRt.sizeDelta = new Vector2(Mathf.Max(mbRt.sizeDelta.x, 360f), Mathf.Max(mbRt.sizeDelta.y, 24f));
+                else if (mbRt.sizeDelta.y < 12f)
+                    mbRt.sizeDelta = new Vector2(mbRt.sizeDelta.x, 24f);
+            }
             _stonesRoot = r.StonesRoot;
             _timerLabel = r.TimerLabel;
             _timerFill = r.TimerFill;
@@ -1543,17 +1555,22 @@ namespace StepDevil
         {
             if (t == null)
                 return;
+            // Non-destructive: only enforce size when the authored value is broken
+            // (near-zero). NEVER reset anchor/pivot/anchoredPosition — those are the
+            // user's authored placement and rewriting them caused the mirror banner to
+            // sit half off-screen in scene-hierarchy mode.
             var rt = t.rectTransform;
-            rt.anchorMin = new Vector2(0f, 0f);
-            rt.anchorMax = new Vector2(0f, 0f);
-            rt.pivot = new Vector2(0.5f, 0.5f);
-            rt.sizeDelta = new Vector2(w, h);
-            rt.anchoredPosition = Vector2.zero;
+            if (rt.sizeDelta.x < w * 0.5f)
+                rt.sizeDelta = new Vector2(w, Mathf.Max(rt.sizeDelta.y, h));
+            else if (rt.sizeDelta.y < h * 0.5f)
+                rt.sizeDelta = new Vector2(rt.sizeDelta.x, h);
             var le = t.GetComponent<LayoutElement>();
             if (le == null)
                 le = t.gameObject.AddComponent<LayoutElement>();
-            le.minWidth = le.preferredWidth = w;
-            le.minHeight = le.preferredHeight = h;
+            le.minWidth = Mathf.Max(le.minWidth, w);
+            le.preferredWidth = Mathf.Max(le.preferredWidth, w);
+            le.minHeight = Mathf.Max(le.minHeight, h);
+            le.preferredHeight = Mathf.Max(le.preferredHeight, h);
         }
 
 #if UNITY_EDITOR
