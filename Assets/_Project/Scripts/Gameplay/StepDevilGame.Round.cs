@@ -267,6 +267,15 @@ namespace StepDevil
 
         StoneWidgets CreateStone(StepDevilStoneDef stone, int index)
         {
+            // One-line diagnostic so you can confirm in the Console:
+            //   • which build path is running (Prefab vs CodeBuilt)
+            //   • whether the icon-key on this stone resolves to one of your assigned Sprite slots
+            // Remove this Debug.Log once stones are showing your art correctly.
+            var resolved = GetIconSpriteForKey(stone.Icon);
+            Debug.Log($"[Stone] index={index} type={stone.Type} icon='{stone.Icon}' " +
+                      $"path={(_stonePrefab != null ? "Prefab" : "CodeBuilt")} " +
+                      $"sprite={(resolved != null ? resolved.name : "<null>")}", this);
+
             if (_stonePrefab != null)
                 return CreateStoneFromPrefab(stone, index);
 
@@ -323,7 +332,18 @@ namespace StepDevil
 
             // Icon is an Image+SDSpriteAnimator placeholder — assign sprites from the Inspector.
             var iconSlot = CreateAnimSlot(inner.transform, "Icon", 40f, 40f);
-            iconSlot.GetComponent<Image>().color = accent;
+            var iconImgCb = iconSlot.GetComponent<Image>();
+            var iconSpriteCb = GetIconSpriteForKey(stone.Icon);
+            if (iconSpriteCb != null)
+            {
+                iconImgCb.sprite = iconSpriteCb;
+                iconImgCb.color = Color.white;
+                iconImgCb.preserveAspect = true;
+            }
+            else
+            {
+                iconImgCb.color = accent;
+            }
             var iconSlotLe = iconSlot.gameObject.GetComponent<LayoutElement>();
             if (iconSlotLe != null) { iconSlotLe.preferredWidth = 40f; iconSlotLe.minWidth = 40f; iconSlotLe.preferredHeight = 40f; iconSlotLe.minHeight = 40f; }
             var icon = iconSlot;
