@@ -309,6 +309,15 @@ namespace StepDevil
                 _storeGo = BuildStoreScreen(_rootRt);
                 _storeGo.SetActive(false);
             }
+            // Chest screen: never bound from the scene (no ChestScreen slot in
+            // StepDevilUiReferences), so always lazy-built. Without this, chest reward
+            // claims after every 3rd cleared level would activate a null screen and
+            // leave the player stranded on a blank canvas.
+            if (_rootRt != null && _chestGo == null)
+            {
+                _chestGo = BuildChestScreen(_rootRt);
+                _chestGo.SetActive(false);
+            }
 
             // Inject title extras (wallet bar + spin + rewards buttons) only if neither
             // the code-built bar nor a scene-authored ActionBar already exists. Without
@@ -546,17 +555,6 @@ namespace StepDevil
             {
                 _dailyChallengeButton.onClick.RemoveAllListeners();
                 _dailyChallengeButton.onClick.AddListener(OnDailyChallengePressed);
-                Debug.Log("[StepDevil] DailyChallenge button WIRED to: " +
-                          _dailyChallengeButton.name + "  (interactable=" +
-                          _dailyChallengeButton.interactable + ", done today=" +
-                          StepDevilDailyChallenge.IsCompletedToday() + ")", _dailyChallengeButton);
-            }
-            else
-            {
-                Debug.LogWarning("[StepDevil] DailyChallenge button is NULL. Finder couldn't " +
-                                 "match by name ('DAILYCHALLENGE','CHALLENGE','DAILY') or label " +
-                                 "('DAILY CHALLENGE','CHALLENGE'). Drag your scene button into " +
-                                 "StepDevilGame's 'Scene Daily Challenge Button Override' slot.");
             }
 
             if (_spinButton != null)
@@ -780,9 +778,6 @@ namespace StepDevil
 
         void OnDailyChallengePressed()
         {
-            Debug.Log("[StepDevil] OnDailyChallengePressed fired. IsCompletedToday=" +
-                      StepDevilDailyChallenge.IsCompletedToday() +
-                      ", TotalLives=" + StepDevilWallet.TotalLives);
             if (StepDevilDailyChallenge.IsCompletedToday())
                 return; // already done today
 
