@@ -193,8 +193,83 @@ namespace StepDevil
                 LayoutRebuilder.ForceRebuildLayoutImmediate(_stonesRoot);
         }
 
+        Sprite GetIconSpriteForKey(string iconKey)
+        {
+            if (string.IsNullOrEmpty(iconKey)) return null;
+            if (iconKey == "✓") return _iconSafeSprite;
+            if (iconKey == "✗") return _iconDangerSprite;
+            if (iconKey == "★") return _iconBonusSprite;
+            if (iconKey == "↑") return _iconSpringSprite;
+            if (iconKey == "↻") return _iconMirrorSprite;
+            return null;
+        }
+
+        StoneWidgets CreateStoneFromPrefab(StepDevilStoneDef stone, int index)
+        {
+            var go = Instantiate(_stonePrefab, _stonesRoot, false);
+            go.name = $"Stone_{index}";
+
+            var bg = go.GetComponent<Image>();
+            var btn = go.GetComponent<Button>();
+            if (btn == null) btn = go.AddComponent<Button>();
+            if (bg != null) btn.targetGraphic = bg;
+            btn.onClick.RemoveAllListeners();
+            var captured = index;
+            btn.onClick.AddListener(() => OnStoneTapped(captured));
+
+            var contentT = go.transform.Find("Content");
+            var topT  = contentT != null ? contentT.Find("TopBar") : null;
+            var iconT = contentT != null ? contentT.Find("Icon")   : null;
+            var lblT  = contentT != null ? contentT.Find("Label")  : null;
+            var hintT = contentT != null ? contentT.Find("Hint")   : null;
+            var tagT  = go.transform.Find("Tag");
+
+            var topImg   = topT  != null ? topT.GetComponent<Image>() : null;
+            var iconImg  = iconT != null ? iconT.GetComponent<Image>() : null;
+            var iconAnim = iconT != null ? iconT.GetComponent<SDSpriteAnimator>() : null;
+            var label    = lblT  != null ? lblT.GetComponent<TextMeshProUGUI>() : null;
+            var hint     = hintT != null ? hintT.GetComponent<TextMeshProUGUI>() : null;
+            var tag      = tagT  != null ? tagT.GetComponent<TextMeshProUGUI>() : null;
+
+            var accent = StepDevilPalette.StoneAccent(stone.ColorKey);
+            var accentSolid = new Color(accent.r / 255f, accent.g / 255f, accent.b / 255f, 1f);
+
+            if (bg != null) bg.color = new Color(accentSolid.r, accentSolid.g, accentSolid.b, 0.08f);
+            var outline = go.GetComponent<Outline>();
+            if (outline != null) outline.effectColor = new Color(accentSolid.r, accentSolid.g, accentSolid.b, 0.9f);
+            if (topImg != null) topImg.color = accentSolid;
+
+            if (iconImg != null)
+            {
+                var sprite = GetIconSpriteForKey(stone.Icon);
+                if (sprite != null) iconImg.sprite = sprite;
+                iconImg.color = sprite != null ? Color.white : accentSolid;
+                iconImg.preserveAspect = true;
+            }
+
+            if (label != null) { label.text = stone.Label; label.color = accentSolid; }
+            if (hint  != null) { hint.text  = ""; }
+            if (tag   != null) { tag.text   = ""; tag.gameObject.SetActive(false); }
+
+            return new StoneWidgets
+            {
+                Root = go,
+                Button = btn,
+                Bg = bg,
+                TopBar = topImg,
+                Icon = iconAnim,
+                Label = label,
+                Hint = hint,
+                Tag = tag,
+                Index = index
+            };
+        }
+
         StoneWidgets CreateStone(StepDevilStoneDef stone, int index)
         {
+            if (_stonePrefab != null)
+                return CreateStoneFromPrefab(stone, index);
+
             var go = new GameObject($"Stone_{index}", typeof(RectTransform));
             go.transform.SetParent(_stonesRoot, false);
             var le = go.AddComponent<LayoutElement>();

@@ -94,6 +94,20 @@ namespace StepDevil
         [Tooltip("Drag coin / confetti / diamond sprites here. Played as a looping animation overlay whenever a reward is claimed.")]
         [SerializeField] SDSpriteAnimatorPreset _rewardCelebrationPreset;
 
+        [Header("Stone visuals (optional)")]
+        [Tooltip("Drag your stone Prefab here (e.g. Assets/_Project/Prefabs/Stone_0.prefab). Required: root has Image+Button+LayoutElement, child 'Content' with 'TopBar', 'Icon' (Image), 'Label' (TextMeshProUGUI), 'Hint' (TextMeshProUGUI), and 'Tag' (TextMeshProUGUI) at root. When assigned, CreateStone() instantiates this prefab instead of building a stone from code — letting you customise sprites, sizes, fonts in one place.")]
+        [SerializeField] GameObject _stonePrefab;
+        [Tooltip("Sprite for the SAFE/check (✓) icon. Shown on stones whose Icon string is the check character — including LYING stones that pretend to be safe. Leave null to keep the Image empty.")]
+        [SerializeField] Sprite _iconSafeSprite;
+        [Tooltip("Sprite for the DANGER/cross (✗) icon. Shown on stones pretending to be — or actually being — Void. Leave null to keep the Image empty.")]
+        [SerializeField] Sprite _iconDangerSprite;
+        [Tooltip("Sprite for the BONUS/star (★) icon. Leave null to keep the Image empty.")]
+        [SerializeField] Sprite _iconBonusSprite;
+        [Tooltip("Sprite for the SPRING/up-arrow (↑) icon. Leave null to keep the Image empty.")]
+        [SerializeField] Sprite _iconSpringSprite;
+        [Tooltip("Sprite for the MIRROR/loop (↻) icon. Leave null to keep the Image empty.")]
+        [SerializeField] Sprite _iconMirrorSprite;
+
         Canvas _canvas;
         RectTransform _rootRt;
         Image _flashOverlay;
