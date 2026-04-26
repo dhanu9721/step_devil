@@ -145,8 +145,16 @@ namespace StepDevil
             // flag and runs regardless of whether a banner exists.
             if (_mirrorBanner != null)
             {
-                var mirrorWasVisible = _mirrorBanner.gameObject.activeSelf;
-                _mirrorBanner.gameObject.SetActive(_mirror);
+                // Toggle the wrapper GameObject (e.g. "Mirror" parent of "Lbl") rather
+                // than the TMP itself — that's what the scene author hides/shows.
+                var toggleTarget = _mirrorBannerToggleTarget != null
+                    ? _mirrorBannerToggleTarget
+                    : _mirrorBanner.gameObject;
+                var mirrorWasVisible = toggleTarget.activeSelf;
+                toggleTarget.SetActive(_mirror);
+                // Also force the inner TMP active in case the author left it disabled.
+                if (_mirror && !_mirrorBanner.gameObject.activeSelf)
+                    _mirrorBanner.gameObject.SetActive(true);
                 if (_mirror)
                 {
                     _mirrorBanner.text = $"! LEFT <-> RIGHT FLIPPED! ({_mirrorCd} left)";

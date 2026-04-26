@@ -127,7 +127,12 @@ namespace StepDevil
                 var devilAnimTf = FindDeep(g, "devilAnim");
                 if (devilAnimTf != null)
                     r.DevilAnim = devilAnimTf.GetComponent<SDSpriteAnimator>();
-                r.MirrorBanner = FindTmp(g, "Mirror");
+                // Accepts multiple shapes:
+                //   Mirror (TMP)                   ← TMP directly on the named GameObject
+                //   Mirror/Lbl                     ← TMP on a "Lbl" child (common pattern)
+                //   Mirror/<any descendant TMP>    ← any TMP underneath
+                //   MirrorBanner / MirrorLbl       ← alternate parent names
+                r.MirrorBanner = FindTmpInGameHudRow(g, "Mirror", "MirrorBanner", "MirrorLbl", "MirrorText");
                 r.StonesRoot = FindDeep(g, "Stones") as RectTransform;
                 r.TimerLabel = FindTmp(g, "TLbl");
                 var track = FindDeep(g, "Track");

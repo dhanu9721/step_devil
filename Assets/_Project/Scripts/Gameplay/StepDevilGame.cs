@@ -134,6 +134,10 @@ namespace StepDevil
         StepDevilBlipController _blipVisuals;
         SDSpriteAnimator _devilAnim;
         TextMeshProUGUI _mirrorBanner;
+        // The GameObject we SetActive when toggling the mirror banner. Usually the
+        // immediate "Mirror" wrapper that holds the background+TMP; falls back to the
+        // TMP's own GameObject if the user keeps the TMP at the top level.
+        GameObject _mirrorBannerToggleTarget;
         RectTransform _stonesRoot;
         readonly List<StoneWidgets> _stonePool = new List<StoneWidgets>();
 
@@ -308,6 +312,25 @@ namespace StepDevil
             RefreshDailyButton();
             RefreshSpinButton();
             ShowScreen(ScreenId.Title);
+        }
+
+        /// <summary>Walks upward from the Mirror TMP to find the wrapping container the
+        /// author would use as the visibility toggle. Stops at the first ancestor whose
+        /// name starts with "Mirror" (case-insensitive). Falls back to the TMP's own
+        /// GameObject when no wrapper is found.</summary>
+        static GameObject ResolveMirrorBannerToggleTarget(Transform tmpTransform)
+        {
+            if (tmpTransform == null) return null;
+            var t = tmpTransform.parent;
+            // Walk up at most 4 levels — banners aren't typically deeply nested.
+            for (var depth = 0; depth < 4 && t != null; depth++)
+            {
+                var n = t.name ?? "";
+                if (n.Length >= 6 && n.Substring(0, 6).Equals("Mirror", System.StringComparison.OrdinalIgnoreCase))
+                    return t.gameObject;
+                t = t.parent;
+            }
+            return tmpTransform.gameObject;
         }
 
         /// <summary>Ensures exactly one screen GameObject of the given name lives under Root.
@@ -735,6 +758,11 @@ namespace StepDevil
                 mbLe.preferredWidth  = Mathf.Max(mbLe.preferredWidth,  BannerW);
                 mbLe.minHeight       = Mathf.Max(mbLe.minHeight,       BannerH);
                 mbLe.preferredHeight = Mathf.Max(mbLe.preferredHeight, BannerH);
+
+                // Resolve the GameObject that should be SetActive-toggled. The TMP itself
+                // may be a Lbl child inside a "Mirror" wrapper that the author used as
+                // the visibility toggle. Walk up to find an ancestor named "Mirror*".
+                _mirrorBannerToggleTarget = ResolveMirrorBannerToggleTarget(_mirrorBanner.transform);
             }
             _stonesRoot = r.StonesRoot;
             _timerLabel = r.TimerLabel;
